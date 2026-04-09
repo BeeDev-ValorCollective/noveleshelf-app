@@ -8,7 +8,7 @@ export default function App() {
   // const [server, setServer] = useState([])
 
   //     useEffect(() => {
-  //         fetch("http://localhost:8000/api/health/")
+  //         fetch("http://localhost:8000/api/debug/health/")
   //             .then(res => res.json())
   //             .then((data) => {
   //               console.log("data", data)
