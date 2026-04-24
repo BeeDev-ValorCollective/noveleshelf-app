@@ -36,7 +36,7 @@ const refreshToken = data.tokens.refresh;
 
 // Store them
 ```
-Expo Mobile
+## Expo Mobile
 ```
 import * as SecureStore from 'expo-secure-store';
 
@@ -44,7 +44,7 @@ await SecureStore.setItemAsync('access_token', accessToken);
 await SecureStore.setItemAsync('refresh_token', refreshToken);
 ```
 
-API call example
+## API call example
 ```
 const accessToken = await SecureStore.getItemAsync('access_token');
 
@@ -54,7 +54,7 @@ const response = await fetch('http://localhost:8000/api/auth/me/', {
     }
 });
 ```
-Token refresh (60 min)
+## Token refresh (60 min)
 ```
 const refreshToken = await SecureStore.getItemAsync('refresh_token');
 
@@ -68,7 +68,7 @@ const data = await response.json();
 // Store the new access token
 await SecureStore.setItemAsync('access_token', data.access);
 ```
-Token logout
+## Token logout
 ```
 await SecureStore.deleteItemAsync('access_token');
 await SecureStore.deleteItemAsync('refresh_token');
