@@ -19,7 +19,7 @@ export default function Home() {
       <Text style={styles.subtext}>Discover, read, and publish literary works in a premium digital environment designed for book lovers and authors alike.</Text>
       <View style={styles.buttonContainer}>
         <GradientButton title="Sign In" onPress={() => router.push('/auth/login')} />
-        <GradientButton title="Sign Up" onPress={() => console.log('Sign up!')} reverse={true} />
+        <GradientButton title="Sign Up" onPress={() => router.push('/auth/register')} reverse={true} />
       </View>
     </View>
   );

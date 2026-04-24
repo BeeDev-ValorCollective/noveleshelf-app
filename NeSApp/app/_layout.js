@@ -56,6 +56,10 @@ export default function RootLayout() {
                 options={{ title: 'Sign In' }} 
             />
             <Stack.Screen 
+                name="auth/register" 
+                options={{ title: 'Sign Up' }} 
+            />
+            <Stack.Screen 
                 name="(protected)" 
                 options={{ headerShown: false }} 
             />
