@@ -11,6 +11,7 @@ const useAuthStore = create((set) => ({
   setAuth: async (user, accessToken, refreshToken) => {
     await AsyncStorage.setItem('access_token', accessToken);
     await AsyncStorage.setItem('refresh_token', refreshToken);
+    await AsyncStorage.setItem('user', JSON.stringify(user)); 
     set({ 
       user, 
       accessToken, 
@@ -20,6 +21,7 @@ const useAuthStore = create((set) => ({
   },
 
   updateUser: (user) => {
+    AsyncStorage.setItem('user', JSON.stringify(user));
     set({ user });
   },
 
@@ -31,6 +33,7 @@ const useAuthStore = create((set) => ({
   clearAuth: async () => {
     await AsyncStorage.removeItem('access_token');
     await AsyncStorage.removeItem('refresh_token');
+    await AsyncStorage.removeItem('user');
     set({ 
       user: null, 
       accessToken: null, 

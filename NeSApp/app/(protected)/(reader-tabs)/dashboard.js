@@ -1,9 +1,9 @@
 // app/dashboard.js
 import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../../constants/colors';
-import { fonts } from '../../constants/fonts';
-import useLogout from '../../hooks/useLogout';
-import GradientButton from '../../components/GradientButton';
+import { colors } from '../../../constants/colors';
+import { fonts } from '../../../constants/fonts';
+import useLogout from '../../../hooks/useLogout';
+import GradientButton from '../../../components/GradientButton';
 
 export default function Dashboard() {
   const { logout } = useLogout();

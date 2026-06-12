@@ -30,14 +30,18 @@ export default function Login() {
       });
 
       const data = await response.json();
+      console.log('API URL:', DB_API);
+      console.log('Login response:', JSON.stringify(data, null, 2));
 
       if (response.ok) {
         setAuth(data.user, data.tokens.access, data.tokens.refresh);
 
-        if (data.user.admin_profile || data.user.author_profile || data.user.moderator_profile) {
-          router.replace('/(protected)/dashboard');
+        const role = data.user.default_login_role;
+
+        if (role === 'reader') {
+          router.replace('/(protected)/(reader-tabs)/dashboard');
         } else {
-          router.replace('/(protected)/dashboard');
+          router.replace('/(protected)/(author-tabs)/dashboard');
         }
       } else {
         setError(data.error || 'Login failed');

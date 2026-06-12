@@ -3,12 +3,11 @@ import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { Stack } from 'expo-router';
 import useAuthStore from '../../store/authStore';
-import { colors } from '../../constants/colors';
-import { fonts } from '../../constants/fonts';
 
 export default function ProtectedLayout() {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -19,17 +18,9 @@ export default function ProtectedLayout() {
   if (!isAuthenticated) return null;
 
   return (
-    <Stack
-    screenOptions={{
-      headerStyle: { backgroundColor: colors.background },
-      headerTintColor: colors.white,
-      headerTitleStyle: { fontFamily: fonts.fredericka },
-    }}
-  >
-    <Stack.Screen 
-      name="dashboard" 
-      options={{ title: 'Dashboard' }} 
-    />
-  </Stack>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(reader-tabs)" />
+      <Stack.Screen name="(author-tabs)" />
+    </Stack>
   );
 }

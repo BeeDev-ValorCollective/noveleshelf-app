@@ -1,15 +1,18 @@
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAuthStore from '../store/authStore';
 import { FrederickatheGreat_400Regular } from '@expo-google-fonts/fredericka-the-great';
 import { Merienda_400Regular, Merienda_700Bold } from '@expo-google-fonts/merienda';
-import { View, Text } from 'react-native';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+    const [isAuthReady, setIsAuthReady] = useState(false);
 
     const [fontsLoaded, fontError] = useFonts({
         FrederickatheGreat_400Regular,
@@ -18,25 +21,26 @@ export default function RootLayout() {
     });
 
     useEffect(() => {
-    const loadAuth = async () => {
-        const accessToken = await AsyncStorage.getItem('access_token');
-        const refreshToken = await AsyncStorage.getItem('refresh_token');
-        if (accessToken) {
-        useAuthStore.getState().updateAccessToken(accessToken);
-        }
-    };
-    loadAuth();
+        const loadAuth = async () => {
+            const accessToken = await AsyncStorage.getItem('access_token');
+            const refreshToken = await AsyncStorage.getItem('refresh_token');
+            const userJson = await AsyncStorage.getItem('user');
+            if (accessToken && userJson) {
+                const user = JSON.parse(userJson);
+                useAuthStore.getState().setAuth(user, accessToken, refreshToken);
+            }
+            setIsAuthReady(true);
+        };
+        loadAuth();
     }, []);
 
-    if (fontError) console.error('Font error:', fontError);
+    useEffect(() => {
+        if ((fontsLoaded || fontError) && isAuthReady) {
+            SplashScreen.hideAsync();
+        }
+    }, [fontsLoaded, fontError, isAuthReady]);
 
-    if (!fontsLoaded) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Loading...</Text>
-            </View>
-        );
-    }
+    if (!fontsLoaded && !fontError) return null;
 
     return (
         <Stack
@@ -47,21 +51,21 @@ export default function RootLayout() {
                 headerBackTitle: '',
             }}
         >
-            <Stack.Screen 
-                name="index" 
-                options={{ title: 'Novel eShelf' }} 
+            <Stack.Screen
+                name="index"
+                options={{ headerShown: false }}
             />
-            <Stack.Screen 
-                name="auth/login" 
-                options={{ title: 'Sign In' }} 
+            <Stack.Screen
+                name="auth/login"
+                options={{ headerShown: false }}
             />
-            <Stack.Screen 
-                name="auth/register" 
-                options={{ title: 'Sign Up' }} 
+            <Stack.Screen
+                name="auth/register"
+                options={{ headerShown: false }}
             />
-            <Stack.Screen 
-                name="(protected)" 
-                options={{ headerShown: false }} 
+            <Stack.Screen
+                name="(protected)"
+                options={{ headerShown: false }}
             />
         </Stack>
     );
