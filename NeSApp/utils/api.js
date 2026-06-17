@@ -13,6 +13,7 @@ export const ENDPOINTS = {
   // Books
   books: {
     public: `${DB_API}books/public/books/`,
-    referenceData: `${DB_API}books/reference-data/`,
+    single: (id) => `${DB_API}books/public/books/${id}/`,
+    referenceData: `${DB_API}books/public/books/reference-data/`,
   },
 };

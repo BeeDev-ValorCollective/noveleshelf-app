@@ -25,9 +25,12 @@ export default function RootLayout() {
             const accessToken = await AsyncStorage.getItem('access_token');
             const refreshToken = await AsyncStorage.getItem('refresh_token');
             const userJson = await AsyncStorage.getItem('user');
+            console.log('loadAuth - accessToken:', !!accessToken, 'userJson:', !!userJson);
             if (accessToken && userJson) {
                 const user = JSON.parse(userJson);
-                useAuthStore.getState().setAuth(user, accessToken, refreshToken);
+                await useAuthStore.getState().setAuth(user, accessToken, refreshToken);
+            } else {
+                useAuthStore.getState().setAuthReady();
             }
             setIsAuthReady(true);
         };

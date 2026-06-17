@@ -55,7 +55,12 @@ export default function ReaderTabsLayout() {
           tabBarIcon: ({ color, size }) => <Settings color={color} size={size} />,
         }}
       />
+      <Tabs.Screen
+        name="book/[id]"
+        options={{ href: null, headerShown: false }}
+      />
     </Tabs>
+
   );
 }
 

@@ -1,16 +1,29 @@
 import { StyleSheet, View, Text, Image } from 'react-native';
+import { useEffect } from 'react';
 import Logo from '../assets/images/logo.png';
 import GradientButton from '../components/GradientButton';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 import { useRouter } from 'expo-router';
-
-
-
+import useAuthStore from '../store/authStore';
 
 export default function Home() {
-
   const router = useRouter();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isLoading = useAuthStore((state) => state.isLoading);
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      const role = useAuthStore.getState().user?.default_login_role;
+      if (role === 'reader') {
+        router.replace('/(protected)/(reader-tabs)/dashboard');
+      } else {
+        router.replace('/(protected)/(author-tabs)/dashboard');
+      }
+    }
+  }, [isLoading, isAuthenticated]);
+
+  if (isLoading) return null;
 
   return (
     <View style={styles.container}>
@@ -48,7 +61,7 @@ const styles = StyleSheet.create({
     color: colors.secondary,
     fontStyle: 'italic',
     padding: 10,
-},
+  },
   buttonContainer: {
     flexDirection: 'row',
     gap: 12,

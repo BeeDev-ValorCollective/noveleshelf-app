@@ -1,20 +1,23 @@
 // app/(protected)/_layout.js
 import { useEffect } from 'react';
-import { useRouter } from 'expo-router';
-import { Stack } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import useAuthStore from '../../store/authStore';
 
 export default function ProtectedLayout() {
+  console.log('ProtectedLayout rendering');
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const user = useAuthStore((state) => state.user);
+  const isLoading = useAuthStore((state) => state.isLoading);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    console.log('isLoading:', isLoading, 'isAuthenticated:', isAuthenticated);
+
+    if (!isLoading && !isAuthenticated) {
       router.replace('/auth/login');
     }
-  }, [isAuthenticated]);
+  }, [isLoading, isAuthenticated]);
 
+  if (isLoading) return null;
   if (!isAuthenticated) return null;
 
   return (

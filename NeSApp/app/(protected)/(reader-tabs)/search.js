@@ -4,6 +4,7 @@ import {
   View, Text, TextInput, FlatList, TouchableOpacity,
   StyleSheet, Image, Modal, ScrollView, ActivityIndicator
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Search as SearchIcon, SlidersHorizontal, X, Check } from 'lucide-react-native';
 import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
@@ -11,6 +12,8 @@ import { ENDPOINTS } from '../../../utils/api';
 import { getMediaUrl } from '../../../utils/mediaUrl';
 
 export default function Search() {
+
+  const router = useRouter();
   // Data state
   const [books, setBooks] = useState([]);
   const [referenceData, setReferenceData] = useState(null);
@@ -41,7 +44,9 @@ export default function Search() {
 
   const fetchReferenceData = async () => {
     try {
+      console.log('Reference data URL:', ENDPOINTS.books.referenceData)
       const response = await fetch(ENDPOINTS.books.referenceData);
+      console.log('Reference data status:', response.status)
       const data = await response.json();
       setReferenceData(data);
     } catch (err) {
@@ -120,7 +125,7 @@ export default function Search() {
   const renderBook = ({ item }) => {
     console.log('Cover URL:', getMediaUrl(item.cover_image));
     return (
-      <TouchableOpacity style={styles.bookCard}>
+      <TouchableOpacity style={styles.bookCard} onPress={() => router.navigate(`/(protected)/book/${item.id}`)}>
         <Image
           source={{ uri: getMediaUrl(item.cover_image) }}
           style={styles.coverImage}
