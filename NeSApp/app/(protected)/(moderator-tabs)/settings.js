@@ -1,12 +1,12 @@
-// app/(protected)/(reader-tabs)/settings.js
+// app/(protected)/(moderator-tabs)/settings.js
 import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../../../constants/colors';
 import AccountSection from '../../../components/SettingsComponents/AccountSection';
 
-export default function Settings() {
+export default function ModeratorSettings() {
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Reader Settings</Text>
+      <Text style={styles.heading}>Moderator Settings</Text>
       <AccountSection />
     </View>
   );

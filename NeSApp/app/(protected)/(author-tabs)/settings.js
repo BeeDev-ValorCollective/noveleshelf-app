@@ -1,11 +1,28 @@
 // app/(protected)/(author-tabs)/settings.js
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../../../constants/colors';
+import AccountSection from '../../../components/SettingsComponents/AccountSection';
 
 export default function AuthorSettings() {
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ color: colors.white }}>Settings</Text>
+    <View style={styles.container}>
+      <Text style={styles.heading}>Author Settings</Text>
+      <AccountSection />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    alignItems: 'center',
+    paddingTop: 60,
+    paddingHorizontal: 20,
+  },
+  heading: {
+    color: colors.white,
+    fontSize: 20,
+    marginBottom: 20,
+  },
+});

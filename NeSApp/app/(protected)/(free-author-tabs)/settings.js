@@ -1,12 +1,12 @@
-// app/(protected)/(reader-tabs)/settings.js
+// app/(protected)/(free-author-tabs)/settings.js
 import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../../../constants/colors';
 import AccountSection from '../../../components/SettingsComponents/AccountSection';
 
-export default function Settings() {
+export default function FreeAuthorSettings() {
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Reader Settings</Text>
+      <Text style={styles.heading}>Free Author Settings</Text>
       <AccountSection />
     </View>
   );

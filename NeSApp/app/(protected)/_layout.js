@@ -24,6 +24,9 @@ export default function ProtectedLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(reader-tabs)" />
       <Stack.Screen name="(author-tabs)" />
+      <Stack.Screen name="(free-author-tabs)" />
+      <Stack.Screen name="(admin-tabs)" />
+      <Stack.Screen name="(moderator-tabs)" />
     </Stack>
   );
 }
