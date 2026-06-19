@@ -16,4 +16,9 @@ export const ENDPOINTS = {
     single: (id) => `${DB_API}books/public/books/${id}/`,
     referenceData: `${DB_API}books/public/books/reference-data/`,
   },
+  // Reader
+  reader: {
+    addBook:`${DB_API}books/reader/library/`,
+    readerShelf:`${DB_API}books/reader/library/`,
+  },
 };

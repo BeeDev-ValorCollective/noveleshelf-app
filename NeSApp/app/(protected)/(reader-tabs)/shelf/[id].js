@@ -1,25 +1,23 @@
-// app/(protected)/(reader-tabs)/book/[id].js
+// app/(protected)/(reader-tabs)/shelf/[id].js
 import { useState, useEffect } from 'react';
 import {
     View, Text, Image, ScrollView, TouchableOpacity,
     StyleSheet, ActivityIndicator
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ArrowLeft, BookOpen, CheckCircle, Star, Users, Check } from 'lucide-react-native';
+import { ArrowLeft, BookOpen, CheckCircle, Star } from 'lucide-react-native';
 import { colors } from '../../../../constants/colors';
 import { fonts } from '../../../../constants/fonts';
 import { ENDPOINTS } from '../../../../utils/api';
 import { getMediaUrl } from '../../../../utils/mediaUrl';
 import useAuthStore from '../../../../store/authStore';
 
-export default function BookDetail() {
+export default function ShelfBookDetail() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const accessToken = useAuthStore((state) => state.accessToken);
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [addingToShelf, setAddingToShelf] = useState(false);
-    const [inShelf, setInShelf] = useState(false);
 
     useEffect(() => {
         fetchBook();
@@ -34,37 +32,6 @@ export default function BookDetail() {
             console.error('Book fetch error:', err);
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleAddToShelf = async () => {
-        if (!accessToken) {
-            router.push('/(auth)/login');
-            return;
-        }
-
-        setAddingToShelf(true);
-        try {
-            const response = await fetch(ENDPOINTS.reader.addBook, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`,
-                },
-                body: JSON.stringify({ book_id: id }),
-            });
-
-            if (response.ok) {
-                // 201 = newly added, 200 = already in shelf — both are success
-                setInShelf(true);
-            } else {
-                const errData = await response.json().catch(() => ({}));
-                console.error('Add to shelf error:', errData);
-            }
-        } catch (err) {
-            console.error('Add to shelf request failed:', err);
-        } finally {
-            setAddingToShelf(false);
         }
     };
 
@@ -87,7 +54,7 @@ export default function BookDetail() {
     return (
         <View style={styles.container}>
             {/* Back Button */}
-            <TouchableOpacity style={styles.backButton} onPress={() => router.push('/(protected)/(reader-tabs)/library')}>
+            <TouchableOpacity style={styles.backButton} onPress={() => router.push('/(protected)/(reader-tabs)/shelf')}>
                 <ArrowLeft color={colors.white} size={22} />
             </TouchableOpacity>
 
@@ -107,21 +74,14 @@ export default function BookDetail() {
                     <View style={styles.heroInfo}>
                         <Text style={styles.title}>{book.title}</Text>
 
-                        {/* Author */}
                         <View style={styles.authorRow}>
                             <Text style={styles.authorName}>{book.author.display_name}</Text>
                         </View>
 
-                        {/* Badges */}
                         <View style={styles.badgeRow}>
                             <View style={styles.ratingBadge}>
                                 <Text style={styles.ratingText}>{book.content_rating.code}</Text>
                             </View>
-                            {book.is_new && (
-                                <View style={styles.newBadge}>
-                                    <Text style={styles.badgeText}>NEW</Text>
-                                </View>
-                            )}
                             {book.is_complete && (
                                 <View style={styles.completeBadge}>
                                     <CheckCircle color={colors.background} size={12} />
@@ -136,7 +96,6 @@ export default function BookDetail() {
                             )}
                         </View>
 
-                        {/* Stats */}
                         <View style={styles.statsRow}>
                             <View style={styles.stat}>
                                 <BookOpen color={colors.primary} size={16} />
@@ -149,25 +108,10 @@ export default function BookDetail() {
                 {/* Content */}
                 <View style={styles.content}>
 
-                    {/* Add to Shelf Button */}
-                    <TouchableOpacity
-                        style={[styles.libraryButton, inShelf && styles.libraryButtonSuccess]}
-                        onPress={handleAddToShelf}
-                        disabled={addingToShelf || inShelf}
-                    >
-                        {addingToShelf ? (
-                            <ActivityIndicator color={colors.background} size="small" />
-                        ) : inShelf ? (
-                            <>
-                                <Check color={colors.background} size={18} />
-                                <Text style={styles.libraryButtonText}>In Your Shelf</Text>
-                            </>
-                        ) : (
-                            <>
-                                <BookOpen color={colors.background} size={18} />
-                                <Text style={styles.libraryButtonText}>Add to Shelf</Text>
-                            </>
-                        )}
+                    {/* Continue Reading Button — disabled until chapter-resume logic exists */}
+                    <TouchableOpacity style={styles.continueButton} disabled>
+                        <BookOpen color={colors.background} size={18} />
+                        <Text style={styles.continueButtonText}>Continue Reading</Text>
                     </TouchableOpacity>
 
                     {/* Description */}
@@ -321,17 +265,6 @@ const styles = StyleSheet.create({
         fontFamily: fonts.meriendaBold,
         fontSize: 11,
     },
-    newBadge: {
-        backgroundColor: colors.primary,
-        paddingHorizontal: 8,
-        paddingVertical: 3,
-        borderRadius: 4,
-    },
-    badgeText: {
-        color: colors.background,
-        fontFamily: fonts.meriendaBold,
-        fontSize: 11,
-    },
     completeBadge: {
         backgroundColor: '#7ec8a0',
         paddingHorizontal: 8,
@@ -431,7 +364,7 @@ const styles = StyleSheet.create({
         fontFamily: fonts.meriendaRegular,
         fontSize: 14,
     },
-    libraryButton: {
+    continueButton: {
         backgroundColor: colors.primary,
         flexDirection: 'row',
         alignItems: 'center',
@@ -440,12 +373,10 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         gap: 10,
         marginTop: 8,
+        opacity: 0.5,
         marginBottom: 24,
     },
-    libraryButtonSuccess: {
-        backgroundColor: '#7ec8a0',
-    },
-    libraryButtonText: {
+    continueButtonText: {
         color: colors.background,
         fontFamily: fonts.meriendaBold,
         fontSize: 16,

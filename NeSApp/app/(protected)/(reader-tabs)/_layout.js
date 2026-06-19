@@ -28,7 +28,7 @@ export default function ReaderTabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="library"
+        name="shelf"
         options={{
           tabBarIcon: ({ color, size }) => <Library color={color} size={size} />,
         }}
@@ -44,7 +44,7 @@ export default function ReaderTabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="search"
+        name="library"
         options={{
           tabBarIcon: ({ color, size }) => <Search color={color} size={size} />,
         }}
@@ -57,6 +57,10 @@ export default function ReaderTabsLayout() {
       />
       <Tabs.Screen
         name="book/[id]"
+        options={{ href: null, headerShown: false }}
+      />
+      <Tabs.Screen
+        name="shelf/[id]"
         options={{ href: null, headerShown: false }}
       />
     </Tabs>
