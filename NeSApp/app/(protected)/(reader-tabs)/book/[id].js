@@ -27,9 +27,14 @@ export default function BookDetail() {
 
     const fetchBook = async () => {
         try {
-            const response = await fetch(ENDPOINTS.books.single(id));
+            const response = await fetch(ENDPOINTS.reader.bookDetail(id), {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             const data = await response.json();
             setBook(data);
+            setInShelf(!!data.in_shelf);
         } catch (err) {
             console.error('Book fetch error:', err);
         } finally {

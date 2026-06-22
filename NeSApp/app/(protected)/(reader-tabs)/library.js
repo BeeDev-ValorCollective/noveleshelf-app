@@ -44,9 +44,7 @@ export default function Library() {
 
   const fetchReferenceData = async () => {
     try {
-      console.log('Reference data URL:', ENDPOINTS.books.referenceData)
       const response = await fetch(ENDPOINTS.books.referenceData);
-      console.log('Reference data status:', response.status)
       const data = await response.json();
       setReferenceData(data);
     } catch (err) {
@@ -123,7 +121,6 @@ export default function Library() {
   const activeFilterCount = Object.values(activeFilters).filter(Boolean).length;
 
   const renderBook = ({ item }) => {
-    console.log('Cover URL:', getMediaUrl(item.cover_image));
     return (
       <TouchableOpacity style={styles.bookCard} onPress={() => router.navigate(`/(protected)/book/${item.id}`)}>
         <Image

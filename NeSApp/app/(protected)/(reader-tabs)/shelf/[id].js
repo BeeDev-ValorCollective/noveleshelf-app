@@ -25,7 +25,11 @@ export default function ShelfBookDetail() {
 
     const fetchBook = async () => {
         try {
-            const response = await fetch(ENDPOINTS.books.single(id));
+            const response = await fetch(ENDPOINTS.reader.bookDetail(id), {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             const data = await response.json();
             setBook(data);
         } catch (err) {
@@ -61,11 +65,6 @@ export default function ShelfBookDetail() {
             <ScrollView showsVerticalScrollIndicator={false}>
                 {/* Hero Section */}
                 <View style={styles.hero}>
-                    <Image
-                        source={require('../../../../assets/images/logo.png')}
-                        style={styles.watermark}
-                        resizeMode="contain"
-                    />
                     <Image
                         source={{ uri: getMediaUrl(book.cover_image) }}
                         style={styles.coverImage}
@@ -108,10 +107,16 @@ export default function ShelfBookDetail() {
                 {/* Content */}
                 <View style={styles.content}>
 
-                    {/* Continue Reading Button — disabled until chapter-resume logic exists */}
+                    {/* Read / Continue / Read Again — disabled until reading screen exists */}
                     <TouchableOpacity style={styles.continueButton} disabled>
                         <BookOpen color={colors.background} size={18} />
-                        <Text style={styles.continueButtonText}>Continue Reading</Text>
+                        <Text style={styles.continueButtonText}>
+                            {book.progress?.is_completed
+                                ? 'Read Again'
+                                : book.progress && parseFloat(book.progress.completion_percentage) > 0
+                                    ? 'Continue Reading'
+                                    : 'Read'}
+                        </Text>
                     </TouchableOpacity>
 
                     {/* Description */}
