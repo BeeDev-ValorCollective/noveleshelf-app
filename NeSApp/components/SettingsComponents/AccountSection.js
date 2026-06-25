@@ -2,15 +2,12 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import useAuthStore from '../../store/authStore';
-import useLogout from '../../hooks/useLogout';
 import { getAvailableRoles, getTabGroupForRole, toTitleCase } from '../../utils/roleHelpers';
 import { colors } from '../../constants/colors';
 import { fonts } from '../../constants/fonts';
-import GradientButton from '../GradientButton';
 
 export default function AccountSection() {
   const router = useRouter();
-  const { logout } = useLogout();
 
   const user = useAuthStore((state) => state.user);
   const currentRole = useAuthStore((state) => state.currentRole);
@@ -56,10 +53,6 @@ export default function AccountSection() {
           </View>
         </View>
       )}
-
-      <View style={styles.logoutBlock}>
-        <GradientButton title="Logout" onPress={logout} />
-      </View>
     </View>
   );
 }
@@ -107,9 +100,5 @@ const styles = StyleSheet.create({
   },
   roleOptionTextActive: {
     color: colors.background,
-  },
-  logoutBlock: {
-    marginTop: 12,
-    alignItems: 'center',
   },
 });
