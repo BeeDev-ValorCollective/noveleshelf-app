@@ -14,6 +14,14 @@ This repo is the reading portion of the Novel eShelf project — web or phone ba
 
 ---
 
+## iFast Deployment:
+- change env to live links
+- run build
+```
+npx expo export --platform web --clear
+```
+be sure to upload entire contents of dist folder - folder for folder.
+
 ## Local Development
 
 ```bash

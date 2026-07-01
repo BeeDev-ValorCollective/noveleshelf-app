@@ -3,6 +3,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../../../constants/colors';
 import ProfileSection from '../../../components/SettingsComponents/ProfileSection';
 import AccountSection from '../../../components/SettingsComponents/AccountSection';
+import GradientButton from '../../../components/GradientButton';
+import useLogout from '../../../hooks/useLogout';
 
 export default function ModeratorSettings() {
   return (
@@ -10,6 +12,9 @@ export default function ModeratorSettings() {
       <Text style={styles.heading}>Moderator Settings</Text>
       <ProfileSection />
       <AccountSection />
+      <View style={styles.logoutBlock}>
+        <GradientButton title="Logout" onPress={logout} />
+      </View>
     </View>
   );
 }
@@ -26,5 +31,9 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 20,
     marginBottom: 20,
+  },
+  logoutBlock: {
+    marginTop: 12,
+    alignItems: 'center',
   },
 });
