@@ -5,4 +5,6 @@ export const colors = {
   primary: '#ff9f8a',
   secondary: '#dd7a7a',
   white: '#ffffff',
+  faded: '#ffffffb3',
+  altfaded: '#ffffff73',
 }

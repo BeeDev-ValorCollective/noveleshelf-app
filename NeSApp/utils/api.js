@@ -9,6 +9,11 @@ export const ENDPOINTS = {
     logout: `${DB_API}auth/logout/`,
     refresh: `${DB_API}auth/token/refresh/`,
     me: `${DB_API}auth/me/`,
+    updateProfile: `${DB_API}user/profile/update/`,
+    adminProfileUpdate: `${DB_API}user/admin-profile/update/`,
+    authorProfileUpdate: `${DB_API}user/author-profile/update/`,
+    freeAuthorProfileUpdate: `${DB_API}user/free-author-profile/update/`,
+    moderatorProfileUpdate: `${DB_API}user/moderator-profile/update/`,
   },
   // Books
   books: {

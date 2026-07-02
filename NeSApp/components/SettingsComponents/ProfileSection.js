@@ -29,7 +29,7 @@ export default function ProfileSection() {
   const penName = hasPenName ? currentProfile?.pen_name : null;
 
   const handleEditProfile = () => {
-    router.push(`/(protected)/${getTabGroupForRole(currentRole)}/profile-update`);
+    router.push('profile-update')
   };
 
   return (

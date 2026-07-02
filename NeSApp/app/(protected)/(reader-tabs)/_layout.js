@@ -63,7 +63,12 @@ export default function ReaderTabsLayout() {
         name="shelf/[id]"
         options={{ href: null, headerShown: false }}
       />
+      <Tabs.Screen
+        name="profile-update"
+        options={{ href: null, headerShown: false }}
+      />
     </Tabs>
+
 
   );
 }
