@@ -7,6 +7,7 @@ import GradientButton from '../../../components/GradientButton';
 import useLogout from '../../../hooks/useLogout';
 
 export default function FreeAuthorSettings() {
+  const { logout } = useLogout();
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Free Author Settings</Text>

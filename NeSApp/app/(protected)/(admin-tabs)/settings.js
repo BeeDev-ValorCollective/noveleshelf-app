@@ -7,6 +7,7 @@ import GradientButton from '../../../components/GradientButton';
 import useLogout from '../../../hooks/useLogout';
 
 export default function AdminSettings() {
+  const { logout } = useLogout();
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Admin Settings</Text>
