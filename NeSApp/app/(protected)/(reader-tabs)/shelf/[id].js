@@ -107,8 +107,14 @@ export default function ShelfBookDetail() {
                 {/* Content */}
                 <View style={styles.content}>
 
-                    {/* Read / Continue / Read Again — disabled until reading screen exists */}
-                    <TouchableOpacity style={styles.continueButton} disabled>
+                    {/* Read / Continue / Read Again */}
+                    <TouchableOpacity
+                        style={styles.continueButton}
+                        onPress={() => router.push({
+                            pathname: '/(protected)/(reader-tabs)/reading',
+                            params: { bookId: id },
+                        })}
+                    >
                         <BookOpen color={colors.background} size={18} />
                         <Text style={styles.continueButtonText}>
                             {book.progress?.is_completed
@@ -378,7 +384,6 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         gap: 10,
         marginTop: 8,
-        opacity: 0.5,
         marginBottom: 24,
     },
     continueButtonText: {

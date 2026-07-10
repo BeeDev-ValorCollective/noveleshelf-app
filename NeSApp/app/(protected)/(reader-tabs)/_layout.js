@@ -64,6 +64,10 @@ export default function ReaderTabsLayout() {
         options={{ href: null, headerShown: false }}
       />
       <Tabs.Screen
+        name="author/[username]"
+        options={{ href: null, headerShown: false }}
+      />
+      <Tabs.Screen
         name="profile-update"
         options={{ href: null, headerShown: false }}
       />

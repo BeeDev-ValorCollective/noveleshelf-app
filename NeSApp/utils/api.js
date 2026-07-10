@@ -27,5 +27,8 @@ export const ENDPOINTS = {
     addBook:`${DB_API}books/reader/library/`,
     readerShelf:`${DB_API}books/reader/library/`,
     bookDetail: (id) => `${DB_API}books/reader/library/book/${id}/`,
+    chapterRead: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/read/`,
+    chapterUnlock: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/unlock/`,
+    setAutoUnlock: (bookId) => `${DB_API}books/reader/library/book/${bookId}/auto-unlock/`,
   },
 };
