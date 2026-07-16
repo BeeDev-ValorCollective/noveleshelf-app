@@ -10,7 +10,10 @@ export default function FreeAuthorSettings() {
     const { logout } = useLogout();
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+    >
       <Text style={styles.heading}>Free Author Settings</Text>
       <ProfileSection />
       <AccountSection />
@@ -25,6 +28,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  contentContainer: {
+    flexGrow: 1,
     alignItems: 'center',
     paddingTop: 60,
     paddingHorizontal: 20,
