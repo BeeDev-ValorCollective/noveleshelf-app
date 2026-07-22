@@ -1,9 +1,7 @@
 // app/(protected)/(reader-tabs)/settings.js
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { colors } from '../../../constants/colors';
-import ProfileSection from '../../../components/SettingsComponents/ProfileSection';
 import AccountSection from '../../../components/SettingsComponents/AccountSection';
-import WalletSection from '../../../components/SettingsComponents/WalletSection';
 import GradientButton from '../../../components/GradientButton';
 import useLogout from '../../../hooks/useLogout';
 
@@ -13,9 +11,7 @@ export default function Settings() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <Text style={styles.heading}>Reader Settings</Text>
-      <ProfileSection />
       <AccountSection />
-      <WalletSection />
       <View style={styles.logoutBlock}>
         <GradientButton title="Logout" onPress={logout} />
       </View>

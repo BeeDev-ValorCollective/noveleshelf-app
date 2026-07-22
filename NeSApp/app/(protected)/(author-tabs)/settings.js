@@ -1,7 +1,6 @@
 // app/(protected)/(author-tabs)/settings.js
 import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../../../constants/colors';
-import ProfileSection from '../../../components/SettingsComponents/ProfileSection';
 import AccountSection from '../../../components/SettingsComponents/AccountSection';
 
 export default function AuthorSettings() {
