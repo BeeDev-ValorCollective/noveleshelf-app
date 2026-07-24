@@ -6,7 +6,7 @@ import ProfileSection from '../../../components/DashboardComponents/ProfileSecti
 export default function ModeratorDashboard() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to your Moderator Dashboard!</Text>
+          <ProfileSection/>
     </View>
   );
 }

@@ -2,6 +2,7 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { colors } from '../../../constants/colors';
 import AccountSection from '../../../components/SettingsComponents/AccountSection';
+import ContactSection from '../../../components/SettingsComponents/ContactSection';
 import GradientButton from '../../../components/GradientButton';
 import useLogout from '../../../hooks/useLogout';
 
@@ -15,6 +16,7 @@ export default function AdminSettings() {
       <Text style={styles.heading}>Admin Settings</Text>
       {/* <ProfileSection /> */}
       <AccountSection />
+      <ContactSection />
       <View style={styles.logoutBlock}>
         <GradientButton title="Logout" onPress={logout} />
       </View>

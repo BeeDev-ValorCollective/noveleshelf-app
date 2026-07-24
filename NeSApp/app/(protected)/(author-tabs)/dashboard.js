@@ -6,7 +6,7 @@ import ProfileSection from '../../../components/DashboardComponents/ProfileSecti
 export default function AuthorDashboard() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to your Author Dashboard!</Text>
+          <ProfileSection/>
     </View>
   );
 }

@@ -6,7 +6,7 @@ import ProfileSection from '../../../components/DashboardComponents/ProfileSecti
 export default function AdminDashboard() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to your Admin Dashboard!</Text>
+          <ProfileSection/>
     </View>
   );
 }
