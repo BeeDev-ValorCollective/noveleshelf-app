@@ -1,7 +1,6 @@
 // app/(protected)/(moderator-tabs)/settings.js
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { colors } from '../../../constants/colors';
-import ProfileSection from '../../../components/SettingsComponents/ProfileSection';
 import AccountSection from '../../../components/SettingsComponents/AccountSection';
 import GradientButton from '../../../components/GradientButton';
 import useLogout from '../../../hooks/useLogout';
@@ -15,7 +14,7 @@ export default function ModeratorSettings() {
       contentContainerStyle={styles.contentContainer}
     >
       <Text style={styles.heading}>Moderator Settings</Text>
-      <ProfileSection />
+      {/* <ProfileSection /> */}
       <AccountSection />
       <View style={styles.logoutBlock}>
         <GradientButton title="Logout" onPress={logout} />

@@ -1,8 +1,8 @@
-// components/SettingsComponents/WalletSection.js
+
 import { View, Text, Image, StyleSheet } from 'react-native';
-import useAuthStore from '../../store/authStore';
-import { colors } from '../../constants/colors';
-import { fonts } from '../../constants/fonts';
+import useAuthStore from '../../../store/authStore';
+import { colors } from '../../../constants/colors';
+import { fonts } from '../../../constants/fonts';
 
 export default function WalletSection() {
   const wallet = useAuthStore((state) => state.user?.wallet);
@@ -12,21 +12,21 @@ export default function WalletSection() {
       <Text style={styles.sectionLabel}>Wallet</Text>
       <View style={styles.balanceRow}>
         <View style={styles.balanceItem}>
-          <Image source={require('../../assets/images/blackink.png')} style={styles.dropIcon} />
+          <Image source={require('../../../assets/images/blackink.png')} style={styles.dropIcon} />
           <View>
             <Text style={styles.balanceValue}>{wallet?.black_ink_balance ?? 0}</Text>
             <Text style={styles.balanceLabel}>Black Ink</Text>
           </View>
         </View>
         <View style={styles.balanceItem}>
-          <Image source={require('../../assets/images/goldink.png')} style={styles.dropIcon} />
+          <Image source={require('../../../assets/images/goldink.png')} style={styles.dropIcon} />
           <View>
             <Text style={styles.balanceValue}>{wallet?.gold_ink_balance ?? 0}</Text>
             <Text style={styles.balanceLabel}>Gold Ink</Text>
           </View>
         </View>
         <View style={styles.balanceItem}>
-          <Image source={require('../../assets/images/quill.png')} style={styles.quillIcon} />
+          <Image source={require('../../../assets/images/quill.png')} style={styles.quillIcon} />
           <View>
             <Text style={styles.balanceValue}>{wallet?.quill_balance ?? 0}</Text>
             <Text style={styles.balanceLabel}>Quills</Text>

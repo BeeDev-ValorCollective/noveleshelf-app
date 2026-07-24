@@ -1,7 +1,6 @@
 // app/(protected)/(admin-tabs)/settings.js
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { colors } from '../../../constants/colors';
-import ProfileSection from '../../../components/SettingsComponents/ProfileSection';
 import AccountSection from '../../../components/SettingsComponents/AccountSection';
 import GradientButton from '../../../components/GradientButton';
 import useLogout from '../../../hooks/useLogout';
@@ -14,7 +13,7 @@ export default function AdminSettings() {
       contentContainerStyle={styles.contentContainer}
     >
       <Text style={styles.heading}>Admin Settings</Text>
-      <ProfileSection />
+      {/* <ProfileSection /> */}
       <AccountSection />
       <View style={styles.logoutBlock}>
         <GradientButton title="Logout" onPress={logout} />
