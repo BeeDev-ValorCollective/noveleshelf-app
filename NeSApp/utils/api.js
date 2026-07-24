@@ -14,6 +14,8 @@ export const ENDPOINTS = {
     authorProfileUpdate: `${DB_API}user/author-profile/update/`,
     freeAuthorProfileUpdate: `${DB_API}user/free-author-profile/update/`,
     moderatorProfileUpdate: `${DB_API}user/moderator-profile/update/`,
+    createHandoffToken: `${DB_API}auth/create-handoff-token/`,
+    exchangeHandoffToken: `${DB_API}auth/exchange-handoff-token/`,
   },
   // Books
   books: {

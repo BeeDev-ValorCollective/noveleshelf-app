@@ -55,7 +55,16 @@ export default function Register() {
 
       if (response.ok) {
         setAuth(data.user, data.tokens.access, data.tokens.refresh);
-        router.replace('/(protected)/dashboard');
+        const role = data.user.default_login_role;
+        const roleRoutes = {
+          reader: '/(protected)/(reader-tabs)/dashboard',
+          author: '/(protected)/(author-tabs)/dashboard',
+          free_author: '/(protected)/(free-author-tabs)/dashboard',
+          admin: '/(protected)/(admin-tabs)/dashboard',
+          moderator: '/(protected)/(moderator-tabs)/dashboard',
+        };
+
+        router.replace(roleRoutes[role] || '/(protected)/(reader-tabs)/dashboard');
       } else {
         console.error('Registration failed:', data);
         setError(data.email?.[0] || data.confirm_password?.[0] || 'Registration failed');
@@ -117,7 +126,7 @@ export default function Register() {
         </Text>
       </TouchableOpacity>
 
-      <Text style={styles.divider}>or continue with</Text>
+      {/* <Text style={styles.divider}>or continue with</Text>
 
       <View style={styles.socialContainer}>
         <TouchableOpacity style={styles.socialButton}>
@@ -126,7 +135,7 @@ export default function Register() {
         <TouchableOpacity style={styles.socialButton}>
           <Text style={styles.socialText}>Apple</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
   );
 }

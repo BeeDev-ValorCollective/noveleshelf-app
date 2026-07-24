@@ -90,16 +90,16 @@ export default function Login() {
         </Text>
       </TouchableOpacity>
 
-      <Text style={styles.divider}>or continue with</Text>
+      {/* <Text style={styles.divider}>or continue with</Text> */}
 
-      <View style={styles.socialContainer}>
+      {/* <View style={styles.socialContainer}>
         <TouchableOpacity style={styles.socialButton}>
           <Text style={styles.socialText}>Google</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.socialButton}>
           <Text style={styles.socialText}>Apple</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
   );
 }

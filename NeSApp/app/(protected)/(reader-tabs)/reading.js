@@ -12,10 +12,11 @@ import { fonts } from '../../../constants/fonts';
 import { ENDPOINTS } from '../../../utils/api';
 import { getMediaUrl } from '../../../utils/mediaUrl';
 import useAuthStore from '../../../store/authStore';
+import { sendToVite } from '../../../utils/authHandoff';
 
-// TODO: replace with the real currency purchase page once it exists.
-// For now this just proves out the "send them off-site to buy more" flow.
-const OFFSITE_PURCHASE_URL = 'https://www.google.com';
+// // TODO: replace with the real currency purchase page once it exists.
+// // For now this just proves out the "send them off-site to buy more" flow.
+// const OFFSITE_PURCHASE_URL = 'https://www.google.com';
 
 export default function Reading() {
   const { bookId: bookIdParam } = useLocalSearchParams();
@@ -207,7 +208,7 @@ export default function Reading() {
 
   const handleOffsitePurchase = () => {
     setInsufficientModal(null);
-    Linking.openURL(OFFSITE_PURCHASE_URL);
+    sendToVite('/purchase-quills');
   };
 
   // ─── Loading / empty / picker / error states ─────────────────────────────
