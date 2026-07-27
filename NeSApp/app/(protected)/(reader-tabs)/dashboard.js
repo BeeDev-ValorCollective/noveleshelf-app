@@ -9,7 +9,7 @@ import WalletSection from '../../../components/DashboardComponents/ReaderDashboa
 export default function Dashboard() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-    <View style={styles.container}>
+    <View style={styles.contentContainer}>
       <ProfileSection/>
       <WalletSection/>
 
@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   contentContainer: {
+    width: '100%',
     flexGrow: 1,
     alignItems: 'center',
     paddingTop: 60,

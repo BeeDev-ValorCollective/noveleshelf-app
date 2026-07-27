@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { receiveFromVite } from '../utils/authHandoff';
+import { ENDPOINTS } from '../utils/api';
+import useAuthStore from '../store/authStore';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 
@@ -18,6 +20,25 @@ export default function Handoff() {
       if (!success) {
         setStatus('error');
         return;
+      }
+
+      // Refresh /me/ so any state changes that happened while the reader
+      // was away (e.g. a Quill purchase crediting their wallet) are
+      // reflected immediately, rather than relying solely on the handoff's
+      // user snapshot -- which was captured at exchange time, potentially
+      // before the Stripe webhook had finished crediting anything.
+      try {
+        const { accessToken } = useAuthStore.getState();
+        const res = await fetch(ENDPOINTS.auth.me, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        const freshUser = await res.json();
+        if (res.ok) {
+          useAuthStore.getState().updateUser(freshUser);
+        }
+      } catch (err) {
+        console.error('Post-handoff /me/ refresh error:', err);
+        // Non-fatal -- proceed with whatever data setAuth already provided
       }
 
       router.replace(next ? `/${next}` : '/(protected)/(reader-tabs)/dashboard');

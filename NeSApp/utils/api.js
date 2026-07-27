@@ -24,6 +24,10 @@ export const ENDPOINTS = {
     referenceData: `${DB_API}books/public/books/reference-data/`,
     authorDetail: (username) => `${DB_API}public/authors/${username}/`,
   },
+  // Currency
+  currency: {
+    listQuillBundles: `${DB_API}currency/quills/bundles/`,
+  },
   // Reader
   reader: {
     addBook:`${DB_API}books/reader/library/`,

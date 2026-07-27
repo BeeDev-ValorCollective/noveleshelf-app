@@ -58,10 +58,10 @@ export default function Register() {
         const role = data.user.default_login_role;
         const roleRoutes = {
           reader: '/(protected)/(reader-tabs)/dashboard',
-          author: '/(protected)/(author-tabs)/dashboard',
-          free_author: '/(protected)/(free-author-tabs)/dashboard',
-          admin: '/(protected)/(admin-tabs)/dashboard',
-          moderator: '/(protected)/(moderator-tabs)/dashboard',
+          author: '/(protected)/(author-tabs)/author-dashboard',
+          free_author: '/(protected)/(free-author-tabs)/free-author-dashboard',
+          admin: '/(protected)/(admin-tabs)/admin-dashboard',
+          moderator: '/(protected)/(moderator-tabs)/moderator-dashboard',
         };
 
         router.replace(roleRoutes[role] || '/(protected)/(reader-tabs)/dashboard');

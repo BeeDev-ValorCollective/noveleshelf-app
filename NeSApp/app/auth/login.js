@@ -41,7 +41,7 @@ export default function Login() {
         if (role === 'reader') {
           router.replace('/(protected)/(reader-tabs)/dashboard');
         } else {
-          router.replace('/(protected)/(author-tabs)/dashboard');
+          router.replace('/(protected)/(author-tabs)/author-dashboard');
         }
       } else {
         setError(data.error || 'Login failed');

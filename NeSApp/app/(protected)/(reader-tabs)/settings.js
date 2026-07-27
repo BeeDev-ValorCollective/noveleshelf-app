@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { colors } from '../../../constants/colors';
 import AccountSection from '../../../components/SettingsComponents/AccountSection';
 import ContactSection from '../../../components/SettingsComponents/ContactSection';
+import WalletSection from '../../../components/DashboardComponents/ReaderDashboardComponents/WalletSection';
 import GradientButton from '../../../components/GradientButton';
 import useLogout from '../../../hooks/useLogout';
 
@@ -13,6 +14,7 @@ export default function Settings() {
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <Text style={styles.heading}>Reader Settings</Text>
       <AccountSection />
+      <WalletSection />
       <ContactSection />
       <View style={styles.logoutBlock}>
         <GradientButton title="Logout" onPress={logout} />

@@ -13,7 +13,7 @@ const VITE_BASE_URL = process.env.EXPO_PUBLIC_VITE_URL;
  * @param {string} destinationPath - path on the Vite site to land on
  *   after auth, e.g. '/purchase-quills' (defaults to root)
  */
-export async function sendToVite(destinationPath = '/dashboard') {
+export async function sendToVite(destinationPath = '/dashboard', returnPath = '') {
   const { accessToken } = useAuthStore.getState();
 
   try {
@@ -28,7 +28,11 @@ export async function sendToVite(destinationPath = '/dashboard') {
       return false;
     }
 
-    const url = `${VITE_BASE_URL}${destinationPath}?handoff=${data.handoff_token}`;
+    let url = `${VITE_BASE_URL}${destinationPath}?handoff=${data.handoff_token}`;
+    if (returnPath) {
+      url += `&return=${encodeURIComponent(returnPath)}`;
+    }
+
     await WebBrowser.openBrowserAsync(url);
     return true;
   } catch (err) {

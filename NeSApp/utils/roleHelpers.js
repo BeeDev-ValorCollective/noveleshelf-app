@@ -56,3 +56,11 @@ export const getTabGroupForRole = (role) => {
       return '(reader-tabs)';
   }
 };
+
+export const getDashboardRouteForRole = (role) => {
+  return role === 'reader' ? 'dashboard' : `${role.replace('_', '-')}-dashboard`;
+};
+
+export const getSettingsRouteForRole = (role) => {
+  return role === 'reader' ? 'settings' : `${role.replace('_', '-')}-settings`;
+};

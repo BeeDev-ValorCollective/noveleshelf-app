@@ -1,11 +1,19 @@
 
 import { View, Text, Image, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router'
 import useAuthStore from '../../../store/authStore';
 import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
+import GradientButton from '../../GradientButton';
 
 export default function WalletSection() {
+  const router = useRouter()
   const wallet = useAuthStore((state) => state.user?.wallet);
+  
+  const handlePurchaseQuills = () => {
+    router.push('/(protected)/(reader-tabs)/quill-bundles');
+  };
+
 
   return (
     <View style={styles.container}>
@@ -33,6 +41,7 @@ export default function WalletSection() {
           </View>
         </View>
       </View>
+      <GradientButton title="Purchase Quills" onPress={handlePurchaseQuills} />
     </View>
   );
 }

@@ -2,7 +2,7 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import useAuthStore from '../../store/authStore';
-import { getAvailableRoles, getTabGroupForRole, toTitleCase } from '../../utils/roleHelpers';
+import { getAvailableRoles, getTabGroupForRole, getDashboardRouteForRole, toTitleCase } from '../../utils/roleHelpers';
 import { colors } from '../../constants/colors';
 import { fonts } from '../../constants/fonts';
 
@@ -19,7 +19,7 @@ export default function AccountSection() {
   const handleRoleSwitch = (role) => {
     if (role === currentRole) return;
     setCurrentRole(role);
-    router.replace(`/(protected)/${getTabGroupForRole(role)}/dashboard`);
+    router.replace(`/(protected)/${getTabGroupForRole(role)}/${getDashboardRouteForRole(role)}`);
   };
 
   return (

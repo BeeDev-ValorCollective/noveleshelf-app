@@ -20,13 +20,13 @@ export default function ModeratorTabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="dashboard"
+        name="moderator-dashboard"
         options={{
           tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="moderator-settings"
         options={{
           tabBarIcon: ({ color, size }) => <Settings color={color} size={size} />,
         }}

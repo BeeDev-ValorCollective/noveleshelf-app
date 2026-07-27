@@ -14,9 +14,6 @@ import { getMediaUrl } from '../../../utils/mediaUrl';
 import useAuthStore from '../../../store/authStore';
 import { sendToVite } from '../../../utils/authHandoff';
 
-// // TODO: replace with the real currency purchase page once it exists.
-// // For now this just proves out the "send them off-site to buy more" flow.
-// const OFFSITE_PURCHASE_URL = 'https://www.google.com';
 
 export default function Reading() {
   const { bookId: bookIdParam } = useLocalSearchParams();
@@ -208,7 +205,8 @@ export default function Reading() {
 
   const handleOffsitePurchase = () => {
     setInsufficientModal(null);
-    sendToVite('/purchase-quills');
+    const returnPath = `(protected)/(reader-tabs)/reading?bookId=${book.id}`;
+    sendToVite('/purchase-quills', returnPath);
   };
 
   // ─── Loading / empty / picker / error states ─────────────────────────────
