@@ -4,6 +4,7 @@ import { colors } from '../../../constants/colors';
 import AccountSection from '../../../components/SettingsComponents/AccountSection';
 import ContactSection from '../../../components/SettingsComponents/ContactSection';
 import WalletSection from '../../../components/DashboardComponents/ReaderDashboardComponents/WalletSection';
+import WalletButtons from '../../../components/SettingsComponents/WalletPurchase'
 import GradientButton from '../../../components/GradientButton';
 import useLogout from '../../../hooks/useLogout';
 
@@ -15,6 +16,7 @@ export default function Settings() {
       <Text style={styles.heading}>Reader Settings</Text>
       <AccountSection />
       <WalletSection />
+      <WalletButtons />
       <ContactSection />
       <View style={styles.logoutBlock}>
         <GradientButton title="Logout" onPress={logout} />

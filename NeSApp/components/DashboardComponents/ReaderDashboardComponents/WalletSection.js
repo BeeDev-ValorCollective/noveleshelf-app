@@ -10,9 +10,6 @@ export default function WalletSection() {
   const router = useRouter()
   const wallet = useAuthStore((state) => state.user?.wallet);
   
-  const handlePurchaseQuills = () => {
-    router.push('/(protected)/(reader-tabs)/quill-bundles');
-  };
 
 
   return (
@@ -41,7 +38,6 @@ export default function WalletSection() {
           </View>
         </View>
       </View>
-      <GradientButton title="Purchase Quills" onPress={handlePurchaseQuills} />
     </View>
   );
 }

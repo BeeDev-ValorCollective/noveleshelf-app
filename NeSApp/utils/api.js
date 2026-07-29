@@ -27,6 +27,7 @@ export const ENDPOINTS = {
   // Currency
   currency: {
     listQuillBundles: `${DB_API}currency/quills/bundles/`,
+    redeemPromoCode: `${DB_API}currency/promo/redeem/`,
   },
   // Reader
   reader: {
