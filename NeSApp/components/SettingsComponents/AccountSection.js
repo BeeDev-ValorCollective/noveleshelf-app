@@ -61,11 +61,13 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.secondary,
   },
   sectionLabel: {
     color: colors.secondary,
     fontFamily: fonts.meriendaRegular,
-    fontSize: 14,
+    fontSize: 22,
     marginBottom: 4,
   },
   currentRole: {
@@ -88,15 +90,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.secondary,
+    borderColor: colors.tertiary,
   },
   roleOptionActive: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.tertiary,
   },
   roleOptionText: {
-    color: colors.secondary,
+    color: colors.tertiary,
     fontFamily: fonts.meriendaRegular,
-    fontSize: 14,
+    fontSize: 18,
   },
   roleOptionTextActive: {
     color: colors.background,

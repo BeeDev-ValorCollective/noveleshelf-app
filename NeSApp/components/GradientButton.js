@@ -28,11 +28,11 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
-    width: 170,
+    width: 190,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: fonts.fredericka,
   }
 });

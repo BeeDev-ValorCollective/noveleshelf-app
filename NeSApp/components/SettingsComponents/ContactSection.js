@@ -42,11 +42,13 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.secondary,
   },
   sectionLabel: {
     color: colors.secondary,
     fontFamily: fonts.meriendaRegular,
-    fontSize: 14,
+    fontSize: 22,
     marginBottom: 12,
   },
   contactMethod: {
@@ -63,7 +65,7 @@ const styles = StyleSheet.create({
   email: {
     color: colors.secondary,
     fontFamily: fonts.meriendaRegular,
-    fontSize: 14,
+    fontSize: 18,
     textDecorationLine: 'underline',
   },
 });

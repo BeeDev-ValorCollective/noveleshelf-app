@@ -7,4 +7,5 @@ export const colors = {
   white: '#ffffff',
   faded: '#ffffffb3',
   altfaded: '#ffffff73',
+  tertiary: '#68b9b9',
 }

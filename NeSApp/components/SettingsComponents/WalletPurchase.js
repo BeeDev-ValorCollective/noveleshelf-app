@@ -5,6 +5,8 @@ import { View, Text, TextInput, StyleSheet, ActivityIndicator } from 'react-nati
 import useAuthStore from '../../store/authStore'
 import { ENDPOINTS } from '../../utils/api'
 import GradientButton from '../GradientButton'
+import { colors } from '../../constants/colors';
+import { fonts } from '../../constants/fonts';
 
 export default function WalletPurchase() {
     const router = useRouter()
@@ -116,6 +118,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.secondary,
     },
     promoSection: {
         flexGrow: 1,

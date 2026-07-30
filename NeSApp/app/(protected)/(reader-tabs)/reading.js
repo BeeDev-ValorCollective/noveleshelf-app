@@ -292,11 +292,14 @@ export default function Reading() {
         <TouchableOpacity onPress={() => router.push('/(protected)/(reader-tabs)/shelf')}>
           <ArrowLeft color={colors.white} size={22} />
         </TouchableOpacity>
+        {/* Book Title */}
         <Text style={styles.headerTitle} numberOfLines={1}>{book.title}</Text>
+        {/* Page count */}
         <Text style={styles.headerPosition}>{currentIndex + 1}/{book.reading_sequence.length}</Text>
       </View>
 
       <ScrollView style={styles.contentScroll} contentContainerStyle={styles.contentContainer}>
+        {/* Chapter Title */}
         <Text style={styles.itemTitle}>
           {item.type === 'page' ? item.title : item.display_title}
         </Text>
@@ -309,6 +312,7 @@ export default function Reading() {
             <Text style={styles.lockedText}>This chapter is locked.</Text>
           </View>
         ) : (
+          // Book Content
           <RenderHTML
             contentWidth={width - 40}
             source={{ html: content || '' }}
@@ -477,15 +481,15 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    color: colors.white,
+    color: colors.headerText,
     fontFamily: fonts.fredericka,
-    fontSize: 16,
+    fontSize: 20,
     textAlign: 'center',
   },
   headerPosition: {
-    color: colors.secondary,
+    color: colors.tertiary,
     fontFamily: fonts.meriendaRegular,
-    fontSize: 12,
+    fontSize: 14,
   },
   contentScroll: {
     flex: 1,
@@ -495,16 +499,16 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   itemTitle: {
-    color: colors.primary,
+    color: colors.headerText,
     fontFamily: fonts.fredericka,
     fontSize: 20,
     marginBottom: 16,
   },
   htmlBase: {
-    color: colors.white,
+    color: colors.headerText,
     fontFamily: fonts.meriendaRegular,
-    fontSize: 15,
-    lineHeight: 24,
+    fontSize: 18,
+    lineHeight: 26,
   },
   lockedState: {
     alignItems: 'center',
