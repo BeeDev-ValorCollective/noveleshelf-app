@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 import useAuthStore from '../store/authStore';
 import { FrederickatheGreat_400Regular } from '@expo-google-fonts/fredericka-the-great';
 import { Merienda_400Regular, Merienda_700Bold } from '@expo-google-fonts/merienda';
@@ -10,6 +11,20 @@ import { fonts } from '../constants/fonts';
 import * as SplashScreen from 'expo-splash-screen';
 
 SplashScreen.preventAutoHideAsync();
+
+// Tag every outgoing fetch with which Expo runtime made it, so the backend
+// can tell Expo-web / Expo-native apart from Vite in DailyActivity/Event logs.
+// Patched once here at module scope so it applies before any screen fetches.
+const originalFetch = global.fetch;
+global.fetch = (url, options = {}) => {
+    return originalFetch(url, {
+        ...options,
+        headers: {
+            ...options.headers,
+            'X-Client-Platform': Platform.OS === 'web' ? 'expo_web' : 'expo_native',
+        },
+    });
+};
 
 export default function RootLayout() {
     const [isAuthReady, setIsAuthReady] = useState(false);

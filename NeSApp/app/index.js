@@ -18,7 +18,7 @@ export default function Home() {
       if (role === 'reader') {
         router.replace('/(protected)/(reader-tabs)/dashboard');
       } else {
-        router.replace('/(protected)/(author-tabs)/dashboard');
+        router.replace('/(protected)/(author-tabs)/author-dashboard');
       }
     }
   }, [isLoading, isAuthenticated]);

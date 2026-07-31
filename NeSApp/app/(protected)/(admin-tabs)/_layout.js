@@ -20,13 +20,13 @@ export default function AdminTabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="dashboard"
+        name="admin-dashboard"
         options={{
           tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="admin-settings"
         options={{
           tabBarIcon: ({ color, size }) => <Settings color={color} size={size} />,
         }}

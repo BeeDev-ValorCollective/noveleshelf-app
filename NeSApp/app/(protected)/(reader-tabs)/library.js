@@ -1,21 +1,60 @@
 // app/(protected)/(reader-tabs)/search.js
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, FlatList, TouchableOpacity,
   StyleSheet, Image, Modal, ScrollView, ActivityIndicator
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Search as SearchIcon, SlidersHorizontal, X, Check } from 'lucide-react-native';
+import { Search as SearchIcon, SlidersHorizontal, X, Check, ChevronDown } from 'lucide-react-native';
 import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
 import { ENDPOINTS } from '../../../utils/api';
 import { getMediaUrl } from '../../../utils/mediaUrl';
 
+const EMPTY_BOOK_FILTERS = {
+  genre: null,
+  content_rating: null,
+  relationship_tag: null,
+  keyword: null,
+  is_new: false,
+  is_complete: false,
+  is_featured: false,
+};
+
+const EMPTY_AUTHOR_FILTERS = {
+  is_featured: false,
+  is_founding_author: false,
+};
+
+const DEFAULT_ORDER = {
+  books: 'newest',
+  authors: 'az',
+};
+
+const BOOK_ORDER_OPTIONS = [
+  { value: 'newest', label: 'Newest' },
+  { value: 'az', label: 'A – Z' },
+  { value: 'za', label: 'Z – A' },
+  { value: 'featured', label: 'Featured first' },
+];
+
+const AUTHOR_ORDER_OPTIONS = [
+  { value: 'az', label: 'A – Z' },
+  { value: 'za', label: 'Z – A' },
+  { value: 'featured', label: 'Featured first' },
+];
+
 export default function Library() {
 
   const router = useRouter();
+
+  // View / sort state
+  const [view, setView] = useState('books');
+  const [order, setOrder] = useState('newest');
+  const [orderModalVisible, setOrderModalVisible] = useState(false);
+
   // Data state
-  const [books, setBooks] = useState([]);
+  const [results, setResults] = useState([]);
   const [referenceData, setReferenceData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -25,21 +64,13 @@ export default function Library() {
   // Search & filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [filterModalVisible, setFilterModalVisible] = useState(false);
-  const [activeFilters, setActiveFilters] = useState({
-    genre: null,
-    content_rating: null,
-    relationship_tag: null,
-    keyword: null,
-    is_new: false,
-    is_complete: false,
-    is_featured: false,
-  });
-  const [pendingFilters, setPendingFilters] = useState({ ...activeFilters });
+  const [activeFilters, setActiveFilters] = useState({ ...EMPTY_BOOK_FILTERS });
+  const [pendingFilters, setPendingFilters] = useState({ ...EMPTY_BOOK_FILTERS });
 
   // Load reference data on mount
   useEffect(() => {
     fetchReferenceData();
-    fetchBooks(1, '', activeFilters);
+    fetchResults(1, '', EMPTY_BOOK_FILTERS, 'books', 'newest');
   }, []);
 
   const fetchReferenceData = async () => {
@@ -52,73 +83,97 @@ export default function Library() {
     }
   };
 
-  const buildQueryString = (pageNum, query, filters) => {
+  const buildQueryString = (pageNum, query, filters, currentView, currentOrder) => {
     const params = new URLSearchParams();
     params.append('page', pageNum);
+    if (currentView === 'authors') params.append('view', 'authors');
+    if (currentOrder) params.append('order', currentOrder);
     if (query) params.append('search', query);
-    if (filters.genre) params.append('genre', filters.genre);
-    if (filters.content_rating) params.append('content_rating', filters.content_rating);
-    if (filters.relationship_tag) params.append('relationship_tag', filters.relationship_tag);
-    if (filters.keyword) params.append('keyword', filters.keyword);
-    if (filters.is_new) params.append('is_new', 'true');
-    if (filters.is_complete) params.append('is_complete', 'true');
-    if (filters.is_featured) params.append('is_featured', 'true');
+
+    if (currentView === 'books') {
+      if (filters.genre) params.append('genre', filters.genre);
+      if (filters.content_rating) params.append('content_rating', filters.content_rating);
+      if (filters.relationship_tag) params.append('relationship_tag', filters.relationship_tag);
+      if (filters.keyword) params.append('keyword', filters.keyword);
+      if (filters.is_new) params.append('is_new', 'true');
+      if (filters.is_complete) params.append('is_complete', 'true');
+      if (filters.is_featured) params.append('is_featured', 'true');
+    } else {
+      if (filters.is_featured) params.append('is_featured', 'true');
+      if (filters.is_founding_author) params.append('is_founding_author', 'true');
+    }
+
     return params.toString();
   };
 
-  const fetchBooks = async (pageNum, query, filters, append = false) => {
+  const fetchResults = async (pageNum, query, filters, currentView, currentOrder, append = false) => {
     if (pageNum === 1) setLoading(true);
     else setLoadingMore(true);
 
     try {
-      const qs = buildQueryString(pageNum, query, filters);
+      const qs = buildQueryString(pageNum, query, filters, currentView, currentOrder);
       const response = await fetch(`${ENDPOINTS.books.public}?${qs}`);
       const data = await response.json();
-      setBooks(append ? (prev) => [...prev, ...data.results] : data.results);
+      setResults((prev) => (append ? [...prev, ...data.results] : data.results));
       setTotalPages(data.total_pages);
       setPage(pageNum);
     } catch (err) {
-      console.error('Books fetch error:', err);
+      console.error('Results fetch error:', err);
     } finally {
       setLoading(false);
       setLoadingMore(false);
     }
   };
 
+  const handleViewChange = (newView) => {
+    if (newView === view) return;
+    const emptyFilters = newView === 'books' ? { ...EMPTY_BOOK_FILTERS } : { ...EMPTY_AUTHOR_FILTERS };
+    const newOrder = DEFAULT_ORDER[newView];
+    setResults([]);
+    setView(newView);
+    setOrder(newOrder);
+    setSearchQuery('');
+    setActiveFilters(emptyFilters);
+    setPendingFilters(emptyFilters);
+    setFilterModalVisible(false);
+    setOrderModalVisible(false);
+    fetchResults(1, '', emptyFilters, newView, newOrder);
+  };
+
   const handleSearch = (text) => {
     setSearchQuery(text);
-    fetchBooks(1, text, activeFilters);
+    fetchResults(1, text, activeFilters, view, order);
+  };
+
+  const handleOrderChange = (newOrder) => {
+    setOrder(newOrder);
+    setOrderModalVisible(false);
+    fetchResults(1, searchQuery, activeFilters, view, newOrder);
   };
 
   const handleApplyFilters = () => {
     setActiveFilters(pendingFilters);
     setFilterModalVisible(false);
-    fetchBooks(1, searchQuery, pendingFilters);
+    fetchResults(1, searchQuery, pendingFilters, view, order);
   };
 
   const handleClearFilters = () => {
-    const cleared = {
-      genre: null,
-      content_rating: null,
-      relationship_tag: null,
-      keyword: null,
-      is_new: false,
-      is_complete: false,
-      is_featured: false,
-    };
+    const cleared = view === 'books' ? { ...EMPTY_BOOK_FILTERS } : { ...EMPTY_AUTHOR_FILTERS };
     setPendingFilters(cleared);
     setActiveFilters(cleared);
     setFilterModalVisible(false);
-    fetchBooks(1, searchQuery, cleared);
+    fetchResults(1, searchQuery, cleared, view, order);
   };
 
   const handleLoadMore = () => {
     if (page < totalPages && !loadingMore) {
-      fetchBooks(page + 1, searchQuery, activeFilters, true);
+      fetchResults(page + 1, searchQuery, activeFilters, view, order, true);
     }
   };
 
   const activeFilterCount = Object.values(activeFilters).filter(Boolean).length;
+  const orderOptions = view === 'authors' ? AUTHOR_ORDER_OPTIONS : BOOK_ORDER_OPTIONS;
+  const currentOrderLabel = orderOptions.find((o) => o.value === order)?.label ?? '';
 
   const renderBook = ({ item }) => {
     return (
@@ -144,6 +199,45 @@ export default function Library() {
               {item.genres.map(g => g.name).join(' · ')}
             </Text>
           )}
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderAuthor = ({ item }) => {
+    return (
+      <TouchableOpacity
+        style={styles.authorCard}
+        onPress={() => router.push(`/(protected)/(reader-tabs)/author/${item.username}`)}
+      >
+        <View style={styles.authorAvatar}>
+          {item.avatar_url ? (
+            <Image
+              source={{ uri: getMediaUrl(item.avatar_url) }}
+              style={styles.authorAvatarImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.authorAvatarPlaceholder}>
+              <Text style={styles.authorAvatarPlaceholderText}>
+                {item.display_name?.[0] ?? '?'}
+              </Text>
+            </View>
+          )}
+        </View>
+        <View style={styles.authorInfo}>
+          <View style={styles.authorNameRow}>
+            <Text style={styles.authorName} numberOfLines={1}>{item.display_name}</Text>
+            {item.is_founding_author && (
+              <Text style={styles.foundingBadge}>FOUNDING</Text>
+            )}
+          </View>
+          {item.bio ? (
+            <Text style={styles.authorBio} numberOfLines={2}>{item.bio}</Text>
+          ) : null}
+          <Text style={styles.authorBookCount}>
+            {item.book_count} {item.book_count === 1 ? 'book' : 'books'}
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -192,6 +286,25 @@ export default function Library() {
         <Text style={styles.headerText}>Browse our Library</Text>
       </View>
 
+      {/* Books / Authors toggle */}
+      <View style={styles.viewToggleRow}>
+        <TouchableOpacity
+          style={[styles.viewToggleBtn, view === 'books' && styles.viewToggleBtnActive]}
+          onPress={() => handleViewChange('books')}
+        >
+          <Text style={[styles.viewToggleText, view === 'books' && styles.viewToggleTextActive]}>
+            Books
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.viewToggleBtn, view === 'authors' && styles.viewToggleBtnActive]}
+          onPress={() => handleViewChange('authors')}
+        >
+          <Text style={[styles.viewToggleText, view === 'authors' && styles.viewToggleTextActive]}>
+            Authors
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Search Bar */}
       <View style={styles.searchRow}>
@@ -199,7 +312,7 @@ export default function Library() {
           <SearchIcon color={colors.secondary} size={18} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search books, authors..."
+            placeholder={view === 'authors' ? 'Search authors...' : 'Search books, authors...'}
             placeholderTextColor={colors.secondary}
             value={searchQuery}
             onChangeText={handleSearch}
@@ -211,6 +324,12 @@ export default function Library() {
             </TouchableOpacity>
           )}
         </View>
+
+        <TouchableOpacity style={styles.orderButton} onPress={() => setOrderModalVisible(true)}>
+          <Text style={styles.orderButtonText} numberOfLines={1}>{currentOrderLabel}</Text>
+          <ChevronDown color={colors.primary} size={16} />
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={[styles.filterButton, activeFilterCount > 0 && styles.filterButtonActive]}
           onPress={() => {
@@ -225,23 +344,55 @@ export default function Library() {
         </TouchableOpacity>
       </View>
 
-      {/* Book List */}
+      {/* Results List */}
       {loading ? (
         <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
       ) : (
         <FlatList
-          data={books}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderBook}
+          data={results}
+          keyExtractor={(item) => view === 'books' ? item.id.toString() : `${item.author_type}-${item.id}`}
+          renderItem={view === 'books' ? renderBook : renderAuthor}
           contentContainerStyle={styles.list}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={loadingMore ? <ActivityIndicator color={colors.primary} style={{ padding: 16 }} /> : null}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>No books found.</Text>
+            <Text style={styles.emptyText}>No {view === 'books' ? 'books' : 'authors'} found.</Text>
           }
         />
       )}
+
+      {/* Order Modal */}
+      <Modal
+        visible={orderModalVisible}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setOrderModalVisible(false)}
+      >
+        <TouchableOpacity
+          style={styles.orderModalOverlay}
+          activeOpacity={1}
+          onPress={() => setOrderModalVisible(false)}
+        >
+          <View style={styles.orderModalContent}>
+            {orderOptions.map((opt) => {
+              const isSelected = order === opt.value;
+              return (
+                <TouchableOpacity
+                  key={opt.value}
+                  style={[styles.orderOption, isSelected && styles.orderOptionActive]}
+                  onPress={() => handleOrderChange(opt.value)}
+                >
+                  <Text style={[styles.orderOptionText, isSelected && styles.orderOptionTextActive]}>
+                    {opt.label}
+                  </Text>
+                  {isSelected && <Check color={colors.primary} size={16} />}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       {/* Filter Modal */}
       <Modal
@@ -253,24 +404,34 @@ export default function Library() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Filter Books</Text>
+              <Text style={styles.modalTitle}>Filter {view === 'books' ? 'Books' : 'Authors'}</Text>
               <TouchableOpacity onPress={() => setFilterModalVisible(false)}>
                 <X color={colors.white} size={22} />
               </TouchableOpacity>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-              {renderFilterSection('Genre', referenceData?.genres, 'genre')}
-              {renderFilterSection('Content Rating', referenceData?.content_ratings, 'content_rating', 'code')}
-              {renderFilterSection('Relationship', referenceData?.relationship_tags, 'relationship_tag')}
-              {renderFilterSection('Keywords', referenceData?.keywords, 'keyword')}
+              {view === 'books' ? (
+                <>
+                  {renderFilterSection('Genre', referenceData?.genres, 'genre')}
+                  {renderFilterSection('Content Rating', referenceData?.content_ratings, 'content_rating', 'code')}
+                  {renderFilterSection('Relationship', referenceData?.relationship_tags, 'relationship_tag')}
+                  {renderFilterSection('Keywords', referenceData?.keywords, 'keyword')}
 
-              <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Status</Text>
-                {renderToggleFilter('New Releases', 'is_new')}
-                {renderToggleFilter('Complete', 'is_complete')}
-                {renderToggleFilter('Featured', 'is_featured')}
-              </View>
+                  <View style={styles.filterSection}>
+                    <Text style={styles.filterSectionTitle}>Status</Text>
+                    {renderToggleFilter('New Releases', 'is_new')}
+                    {renderToggleFilter('Complete', 'is_complete')}
+                    {renderToggleFilter('Featured', 'is_featured')}
+                  </View>
+                </>
+              ) : (
+                <View style={styles.filterSection}>
+                  <Text style={styles.filterSectionTitle}>Status</Text>
+                  {renderToggleFilter('Featured', 'is_featured')}
+                  {renderToggleFilter('Founding Author', 'is_founding_author')}
+                </View>
+              )}
             </ScrollView>
 
             <View style={styles.modalFooter}>
@@ -295,18 +456,43 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   header: {
-    display: 'flex', 
-    backgroundColor: colors.background, 
-    justifyContent: 'center', 
+    display: 'flex',
+    backgroundColor: colors.background,
+    justifyContent: 'center',
     alignItems: 'center',
-    
     padding: 16,
   },
-    headerText: {
-      color: colors.white,
-      fontSize: 24,
-      fontFamily: fonts.meriendaRegular,
-    },
+  headerText: {
+    color: colors.white,
+    fontSize: 24,
+    fontFamily: fonts.meriendaRegular,
+  },
+  viewToggleRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    gap: 8,
+  },
+  viewToggleBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.secondary,
+    alignItems: 'center',
+  },
+  viewToggleBtnActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  viewToggleText: {
+    color: colors.secondary,
+    fontFamily: fonts.meriendaBold,
+    fontSize: 13,
+  },
+  viewToggleTextActive: {
+    color: colors.background,
+  },
   searchRow: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -331,6 +517,24 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontFamily: fonts.meriendaRegular,
     fontSize: 14,
+  },
+  orderButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1a1c2e',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: colors.secondary,
+    gap: 4,
+    maxWidth: 110,
+  },
+  orderButtonText: {
+    color: colors.white,
+    fontFamily: fonts.meriendaRegular,
+    fontSize: 12,
+    flexShrink: 1,
   },
   filterButton: {
     backgroundColor: '#1a1c2e',
@@ -430,13 +634,117 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: 2,
   },
+  // Author cards
+  authorCard: {
+    flexDirection: 'row',
+    backgroundColor: '#1a1c2e',
+    borderRadius: 10,
+    marginBottom: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#2a2c3e',
+    gap: 12,
+    alignItems: 'center',
+  },
+  authorAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    overflow: 'hidden',
+  },
+  authorAvatarImage: {
+    width: '100%',
+    height: '100%',
+  },
+  authorAvatarPlaceholder: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#2a2c3e',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  authorAvatarPlaceholderText: {
+    color: colors.primary,
+    fontFamily: fonts.meriendaBold,
+    fontSize: 20,
+  },
+  authorInfo: {
+    flex: 1,
+    gap: 4,
+  },
+  authorNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  authorName: {
+    color: colors.white,
+    fontFamily: fonts.fredericka,
+    fontSize: 15,
+    flexShrink: 1,
+  },
+  foundingBadge: {
+    color: colors.background,
+    backgroundColor: '#ffd900',
+    fontFamily: fonts.meriendaBold,
+    fontSize: 9,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  authorBio: {
+    color: colors.secondary,
+    fontFamily: fonts.meriendaRegular,
+    fontSize: 12,
+  },
+  authorBookCount: {
+    color: colors.secondary,
+    fontFamily: fonts.meriendaRegular,
+    fontSize: 11,
+  },
   emptyText: {
     color: colors.secondary,
     fontFamily: fonts.meriendaRegular,
     textAlign: 'center',
     marginTop: 40,
   },
-  // Modal
+  // Order dropdown modal
+  orderModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    paddingTop: 160,
+    paddingRight: 16,
+  },
+  orderModalContent: {
+    backgroundColor: '#1a1c2e',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#2a2c3e',
+    paddingVertical: 6,
+    minWidth: 160,
+  },
+  orderOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  orderOptionActive: {
+    backgroundColor: '#2a2c3e',
+  },
+  orderOptionText: {
+    color: colors.secondary,
+    fontFamily: fonts.meriendaRegular,
+    fontSize: 13,
+  },
+  orderOptionTextActive: {
+    color: colors.white,
+    fontFamily: fonts.meriendaBold,
+  },
+  // Filter modal
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.7)',

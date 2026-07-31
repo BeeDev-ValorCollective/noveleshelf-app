@@ -5,7 +5,7 @@ import {
     StyleSheet, ActivityIndicator
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ArrowLeft, BookOpen, CheckCircle, Star, Users, Check } from 'lucide-react-native';
+import { ArrowLeft, BookOpen, CheckCircle, Star, Users, Check, UserStar } from 'lucide-react-native';
 import { colors } from '../../../../constants/colors';
 import { fonts } from '../../../../constants/fonts';
 import { ENDPOINTS } from '../../../../utils/api';
@@ -116,6 +116,14 @@ export default function BookDetail() {
                         <View style={styles.authorRow}>
                             <Text style={styles.authorName}>{book.author.display_name}</Text>
                         </View>
+
+                        {/* Founding Author Book */}
+                        {book.is_founding_eligible && (
+                            <View style={styles.foundingBadge}>
+                                <UserStar color={colors.background} size={13} />
+                                <Text style={styles.foundingBadgeText}>Founding Author Book</Text>
+                            </View>
+                        )}
 
                         {/* Badges */}
                         <View style={styles.badgeRow}>
@@ -309,6 +317,21 @@ const styles = StyleSheet.create({
         color: colors.secondary,
         fontFamily: fonts.meriendaRegular,
         fontSize: 13,
+    },
+    foundingBadge: {
+        alignSelf: 'flex-start',
+        backgroundColor: '#ffd900',
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        borderRadius: 4,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+    foundingBadgeText: {
+        color: colors.background,
+        fontFamily: fonts.meriendaBold,
+        fontSize: 11,
     },
     badgeRow: {
         flexDirection: 'row',

@@ -35,7 +35,7 @@ export default function Shelf() {
             setRefreshing(false);
         }
     };
-
+    console.log('my shelf books',books)
     // Refetch every time the tab comes into focus, so a book added
     // from detail shows up without needing a manual app restart
     useFocusEffect(

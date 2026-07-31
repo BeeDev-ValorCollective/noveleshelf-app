@@ -18,6 +18,7 @@ const USERNAME_FIELD_BY_ROLE = {
 
 export default function ProfileSection() {
   const router = useRouter();
+  const user = useAuthStore((state) => state.user)
   const currentProfile = useAuthStore((state) => state.currentProfile);
   const currentRole = useAuthStore((state) => state.currentRole);
   const fullName = useFullName();
@@ -31,6 +32,7 @@ export default function ProfileSection() {
   const handleEditProfile = () => {
     router.push('profile-update')
   };
+  console.log('current user', currentProfile, user)
 
   return (
     <View style={styles.container}>
@@ -42,6 +44,9 @@ export default function ProfileSection() {
         )}
 
         <View style={styles.identity}>
+          <Text style={styles.name}>
+            {<Text style={styles.placeholder}>{user.email}</Text>}
+          </Text>
           <Text style={styles.name}>
             {fullName || <Text style={styles.placeholder}>Name not set</Text>}
           </Text>

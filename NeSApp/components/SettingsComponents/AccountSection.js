@@ -2,7 +2,7 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import useAuthStore from '../../store/authStore';
-import { getAvailableRoles, getTabGroupForRole, toTitleCase } from '../../utils/roleHelpers';
+import { getAvailableRoles, getTabGroupForRole, getDashboardRouteForRole, toTitleCase } from '../../utils/roleHelpers';
 import { colors } from '../../constants/colors';
 import { fonts } from '../../constants/fonts';
 
@@ -19,7 +19,7 @@ export default function AccountSection() {
   const handleRoleSwitch = (role) => {
     if (role === currentRole) return;
     setCurrentRole(role);
-    router.replace(`/(protected)/${getTabGroupForRole(role)}/dashboard`);
+    router.replace(`/(protected)/${getTabGroupForRole(role)}/${getDashboardRouteForRole(role)}`);
   };
 
   return (
@@ -61,11 +61,13 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.secondary,
   },
   sectionLabel: {
     color: colors.secondary,
     fontFamily: fonts.meriendaRegular,
-    fontSize: 14,
+    fontSize: 22,
     marginBottom: 4,
   },
   currentRole: {
@@ -88,15 +90,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.secondary,
+    borderColor: colors.tertiary,
   },
   roleOptionActive: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.tertiary,
   },
   roleOptionText: {
-    color: colors.secondary,
+    color: colors.tertiary,
     fontFamily: fonts.meriendaRegular,
-    fontSize: 14,
+    fontSize: 18,
   },
   roleOptionTextActive: {
     color: colors.background,

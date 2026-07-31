@@ -1,11 +1,12 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
+import ProfileSection from '../../../components/DashboardComponents/ProfileSection';
 
 export default function FreeAuthorDashboard() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to your Free Author Dashboard!</Text>
+          <ProfileSection/>
     </View>
   );
 }
