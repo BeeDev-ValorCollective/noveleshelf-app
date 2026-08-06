@@ -4,6 +4,7 @@ import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
 import ProfileSection from '../../../components/DashboardComponents/ProfileSection';
 import WalletSection from '../../../components/DashboardComponents/ReaderDashboardComponents/WalletSection'
+import StreakSection from '../../../components/DashboardComponents/ReaderDashboardComponents/StreakSection';
 // import { sendToVite } from '../../../utils/authHandoff'; // adjust path to match the screen's location
 
 export default function Dashboard() {
@@ -11,6 +12,7 @@ export default function Dashboard() {
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
     <View style={styles.contentContainer}>
       <ProfileSection/>
+      <StreakSection/>
       <WalletSection/>
 
       {/* <TouchableOpacity onPress={() => sendToVite()}>

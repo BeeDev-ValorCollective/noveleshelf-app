@@ -10,6 +10,7 @@ import { colors } from '../../../../constants/colors';
 import { fonts } from '../../../../constants/fonts';
 import { ENDPOINTS } from '../../../../utils/api';
 import { getMediaUrl } from '../../../../utils/mediaUrl';
+import { formatPublishedDate } from '../../../../utils/formatDate';
 import useAuthStore from '../../../../store/authStore';
 
 export default function BookDetail() {
@@ -88,6 +89,20 @@ export default function BookDetail() {
             </View>
         );
     }
+
+    const handleChapterPress = (chapter) => {
+    if (!accessToken || !inShelf) {
+        return;
+    }
+
+    router.push({
+        pathname: '/(protected)/(reader-tabs)/reading',
+        params: {
+            bookId: String(book.id),
+            chapterId: String(chapter.id),
+        },
+    });
+};
 
     return (
         <View style={styles.container}>
@@ -236,9 +251,16 @@ export default function BookDetail() {
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Chapters</Text>
                             {book.chapters.map((chapter) => (
-                                <TouchableOpacity key={chapter.id} style={styles.chapterRow}>
-                                    <Text style={styles.chapterNumber}>Ch. {chapter.chapter_number}</Text>
-                                    <Text style={styles.chapterTitle} numberOfLines={1}>{chapter.title}</Text>
+                                <TouchableOpacity key={chapter.id}style={[styles.chapterRow,(!accessToken || !inShelf) && styles.chapterRowDisabled,]}
+                                onPress={() => handleChapterPress(chapter)}disabled={!accessToken || !inShelf}>
+                                    
+                                    <View style={styles.chapterInfo}>
+                                        <Text style={styles.chapterNumber}>Ch. {chapter.chapter_number}</Text>
+                                        <Text style={styles.chapterTitle}numberOfLines={1}>{chapter.title}</Text>
+                                        {chapter.published_at && (
+                                            <Text style={styles.chapterPublishedDate}>Published {formatPublishedDate(chapter.published_at)}</Text>
+                                        )}
+                                    </View>
                                 </TouchableOpacity>
                             ))}
                         </View>
@@ -447,6 +469,12 @@ const styles = StyleSheet.create({
         borderBottomColor: '#2a2c3e',
         gap: 12,
     },
+    chapterRowDisabled: {
+    opacity: 0.55,
+    },
+    chapterInfo: {
+        flex: 1,
+    },
     chapterNumber: {
         color: colors.primary,
         fontFamily: fonts.meriendaBold,
@@ -454,10 +482,15 @@ const styles = StyleSheet.create({
         width: 40,
     },
     chapterTitle: {
-        flex: 1,
         color: colors.white,
         fontFamily: fonts.meriendaRegular,
         fontSize: 14,
+    },
+    chapterPublishedDate: {
+        color: colors.primary,
+        fontFamily: fonts.meriendaRegular,
+        fontSize: 11,
+        marginTop: 2,
     },
     libraryButton: {
         backgroundColor: colors.primary,

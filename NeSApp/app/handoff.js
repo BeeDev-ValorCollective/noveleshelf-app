@@ -22,6 +22,20 @@ export default function Handoff() {
         return;
       }
 
+      const destination = Array.isArray(next)
+    ? next[0]
+    : next
+
+if (
+    destination?.includes(
+        '(reader-tabs)'
+    )
+) {
+    await useAuthStore
+        .getState()
+        .setCurrentRole('reader')
+}
+
       // Refresh /me/ so any state changes that happened while the reader
       // was away (e.g. a Quill purchase crediting their wallet) are
       // reflected immediately, rather than relying solely on the handoff's
@@ -41,7 +55,7 @@ export default function Handoff() {
         // Non-fatal -- proceed with whatever data setAuth already provided
       }
 
-      router.replace(next ? `/${next}` : '/(protected)/(reader-tabs)/dashboard');
+      router.replace(destination ? `/${destination}` : '/(protected)/(reader-tabs)/dashboard');
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);

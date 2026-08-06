@@ -33,6 +33,7 @@ export const ENDPOINTS = {
   reader: {
     addBook:`${DB_API}books/reader/library/`,
     readerShelf:`${DB_API}books/reader/library/`,
+    stats: `${DB_API}books/reader/stats/`,
     bookDetail: (id) => `${DB_API}books/reader/library/book/${id}/`,
     chapterRead: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/read/`,
     chapterUnlock: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/unlock/`,
