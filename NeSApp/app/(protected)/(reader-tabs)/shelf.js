@@ -11,6 +11,7 @@ import { fonts } from '../../../constants/fonts';
 import { ENDPOINTS } from '../../../utils/api';
 import { getMediaUrl } from '../../../utils/mediaUrl';
 import useAuthStore from '../../../store/authStore';
+import HeroComponent from '../../../components/HeroComponent';
 
 export default function Shelf() {
     const router = useRouter();
@@ -97,7 +98,7 @@ export default function Shelf() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>My Shelf</Text>
+           <HeroComponent title="Your Shelf" />
 
             {books.length === 0 ? (
                 <View style={styles.emptyContainer}>
@@ -137,13 +138,6 @@ const styles = StyleSheet.create({
         backgroundColor: colors.background,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    header: {
-        color: colors.white,
-        fontFamily: fonts.fredericka,
-        fontSize: 22,
-        paddingHorizontal: 20,
-        marginBottom: 16,
     },
     list: {
         paddingHorizontal: 20,

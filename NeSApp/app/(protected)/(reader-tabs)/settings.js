@@ -7,13 +7,14 @@ import WalletSection from '../../../components/DashboardComponents/ReaderDashboa
 import WalletButtons from '../../../components/SettingsComponents/WalletPurchase'
 import GradientButton from '../../../components/GradientButton';
 import useLogout from '../../../hooks/useLogout';
+import HeroComponent from '../../../components/HeroComponent';
 
 export default function Settings() {
   const { logout } = useLogout();
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.heading}>Reader Settings</Text>
+      <HeroComponent title="Your Settings" />
       <AccountSection />
       <WalletSection />
       <WalletButtons />
@@ -36,11 +37,6 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingHorizontal: 20,
     paddingBottom: 40,
-  },
-  heading: {
-    color: colors.white,
-    fontSize: 20,
-    marginBottom: 20,
   },
   logoutBlock: {
     marginTop: 12,

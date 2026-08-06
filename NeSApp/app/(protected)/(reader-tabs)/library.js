@@ -10,6 +10,7 @@ import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
 import { ENDPOINTS } from '../../../utils/api';
 import { getMediaUrl } from '../../../utils/mediaUrl';
+import HeroComponent from '../../../components/HeroComponent';
 
 const EMPTY_BOOK_FILTERS = {
   genre: null,
@@ -282,10 +283,7 @@ export default function Library() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Browse our Library</Text>
-      </View>
-
+      <HeroComponent title="Browse Our Library" />
       {/* Books / Authors toggle */}
       <View style={styles.viewToggleRow}>
         <TouchableOpacity
@@ -454,18 +452,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     paddingTop: 60,
-  },
-  header: {
-    display: 'flex',
-    backgroundColor: colors.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  headerText: {
-    color: colors.white,
-    fontSize: 24,
-    fontFamily: fonts.meriendaRegular,
   },
   viewToggleRow: {
     flexDirection: 'row',
