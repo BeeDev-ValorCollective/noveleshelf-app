@@ -8,4 +8,7 @@ export const colors = {
   faded: '#ffffffb3',
   altfaded: '#ffffff73',
   tertiary: '#68b9b9',
+  sepia: '#f7eac9',
+  amoledText: '#C8C8C8',
+  amoledBg: '#000',
 }
