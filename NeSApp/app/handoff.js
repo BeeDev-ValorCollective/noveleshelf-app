@@ -1,12 +1,13 @@
 // app/handoff.js
 import { useEffect, useState } from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { receiveFromVite } from '../utils/authHandoff';
 import { ENDPOINTS } from '../utils/api';
 import useAuthStore from '../store/authStore';
 import { colors } from '../constants/colors';
-import { fonts } from '../constants/fonts';
+
+import LoadingScreen from '../components/CommonComponents/LoadingScreen';
+import ErrorScreen from '../components/CommonComponents/ErrorScreen';
 
 export default function Handoff() {
   const { token, next } = useLocalSearchParams();
@@ -22,19 +23,11 @@ export default function Handoff() {
         return;
       }
 
-      const destination = Array.isArray(next)
-    ? next[0]
-    : next
+      const destination = Array.isArray(next) ? next[0] : next;
 
-if (
-    destination?.includes(
-        '(reader-tabs)'
-    )
-) {
-    await useAuthStore
-        .getState()
-        .setCurrentRole('reader')
-}
+      if (destination?.includes('(reader-tabs)')) {
+        await useAuthStore.getState().setCurrentRole('reader');
+      }
 
       // Refresh /me/ so any state changes that happened while the reader
       // was away (e.g. a Quill purchase crediting their wallet) are
@@ -62,24 +55,15 @@ if (
 
   if (status === 'error') {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>This link has expired or already been used.</Text>
-        <Text style={styles.subText} onPress={() => router.replace('/login')}>
-          Return to login
-        </Text>
-      </View>
+      <ErrorScreen
+        message="This link has expired or already been used."
+        textColor={colors.white}
+        fontSize={15}
+        actionLabel="Return to login"
+        onAction={() => router.replace('/login')}
+      />
     );
   }
 
-  return (
-    <View style={styles.container}>
-      <ActivityIndicator color={colors.primary} size="large" />
-    </View>
-  );
+  return <LoadingScreen />;
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center', padding: 24 },
-  errorText: { color: colors.white, fontFamily: fonts.meriendaRegular, fontSize: 15, textAlign: 'center', marginBottom: 12 },
-  subText: { color: colors.primary, fontFamily: fonts.meriendaBold, fontSize: 14 },
-});
