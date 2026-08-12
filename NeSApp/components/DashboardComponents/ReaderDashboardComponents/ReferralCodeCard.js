@@ -40,7 +40,7 @@ export default function ReferralCodeCard() {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${accessToken}`,
                 },
-                body: JSON.stringify({ referral_code: trimmed }),
+                body: JSON.stringify({ code: trimmed }),
             });
 
             const data = await response.json();
