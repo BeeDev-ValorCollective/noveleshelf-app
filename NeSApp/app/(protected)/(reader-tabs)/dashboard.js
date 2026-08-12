@@ -4,7 +4,6 @@ import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
 import ProfileSection from '../../../components/DashboardComponents/ProfileSection';
 import WalletSection from '../../../components/DashboardComponents/ReaderDashboardComponents/WalletSection'
-import WalletPurchase from '../../../components/SettingsComponents/WalletPurchase';
 import StreakSection from '../../../components/DashboardComponents/ReaderDashboardComponents/StreakSection';
 import HeroComponent from '../../../components/HeroComponent';
 
@@ -15,7 +14,6 @@ export default function Dashboard() {
       <ProfileSection/>
       <StreakSection/>
       <WalletSection/>
-      <WalletPurchase />
     </ScrollView>
   );
 }
