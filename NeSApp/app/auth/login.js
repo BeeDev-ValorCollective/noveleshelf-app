@@ -34,7 +34,11 @@ export default function Login() {
       console.log('Login response:', JSON.stringify(data, null, 2));
 
       if (response.ok) {
-        setAuth(data.user, data.tokens.access, data.tokens.refresh);
+        // Awaited -- setAuth is async (it writes to AsyncStorage before
+        // updating the store), so navigating before it resolves means
+        // ProtectedLayout's guard can still see isAuthenticated: false
+        // and bounce back to login, even though login itself succeeded.
+        await setAuth(data.user, data.tokens.access, data.tokens.refresh);
 
         const role = data.user.default_login_role;
 

@@ -16,6 +16,7 @@ export const ENDPOINTS = {
     moderatorProfileUpdate: `${DB_API}user/moderator-profile/update/`,
     createHandoffToken: `${DB_API}auth/create-handoff-token/`,
     exchangeHandoffToken: `${DB_API}auth/exchange-handoff-token/`,
+    readingPreferencesUpdate: `${DB_API}user/reading-preferences/`,
   },
   // Books
   books: {
@@ -28,11 +29,13 @@ export const ENDPOINTS = {
   currency: {
     listQuillBundles: `${DB_API}currency/quills/bundles/`,
     redeemPromoCode: `${DB_API}currency/promo/redeem/`,
+    redeemReferralCode: `${DB_API}currency/referral/redeem/`,
   },
   // Reader
   reader: {
     addBook:`${DB_API}books/reader/library/`,
     readerShelf:`${DB_API}books/reader/library/`,
+    stats: `${DB_API}books/reader/stats/`,
     bookDetail: (id) => `${DB_API}books/reader/library/book/${id}/`,
     chapterRead: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/read/`,
     chapterUnlock: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/unlock/`,

@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { useRouter } from 'expo-router'
 import { View, Text, TextInput, StyleSheet, ActivityIndicator } from 'react-native';
 
-import useAuthStore from '../../store/authStore'
-import { ENDPOINTS } from '../../utils/api'
-import GradientButton from '../GradientButton'
-import { colors } from '../../constants/colors';
-import { fonts } from '../../constants/fonts';
+import useAuthStore from '../../../store/authStore'
+import { ENDPOINTS } from '../../../utils/api'
+import GradientButton from '../../GradientButton'
+import { colors } from '../../../constants/colors';
+import { fonts } from '../../../constants/fonts';
 
 export default function WalletPurchase() {
     const router = useRouter()

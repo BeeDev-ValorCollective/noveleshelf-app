@@ -4,19 +4,16 @@ import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
 import ProfileSection from '../../../components/DashboardComponents/ProfileSection';
 import WalletSection from '../../../components/DashboardComponents/ReaderDashboardComponents/WalletSection'
-// import { sendToVite } from '../../../utils/authHandoff'; // adjust path to match the screen's location
+import StreakSection from '../../../components/DashboardComponents/ReaderDashboardComponents/StreakSection';
+import HeroComponent from '../../../components/HeroComponent';
 
 export default function Dashboard() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-    <View style={styles.contentContainer}>
+      <HeroComponent title="Your Dashboard" />
       <ProfileSection/>
+      <StreakSection/>
       <WalletSection/>
-
-      {/* <TouchableOpacity onPress={() => sendToVite()}>
-        <Text style={styles.text}>Open on Website</Text>
-      </TouchableOpacity> */}
-    </View>
     </ScrollView>
   );
 }
@@ -27,20 +24,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   contentContainer: {
-    width: '100%',
+    // width: '100%',
     flexGrow: 1,
     alignItems: 'center',
-    paddingTop: 60,
+    paddingTop: 50,
     paddingHorizontal: 20,
     paddingBottom: 40,
-  },
-  heading: {
-    color: colors.white,
-    fontSize: 20,
-    marginBottom: 20,
-  },
-  logoutBlock: {
-    marginTop: 12,
-    alignItems: 'center',
   },
 });

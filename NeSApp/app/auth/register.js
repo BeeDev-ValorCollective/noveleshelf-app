@@ -18,6 +18,7 @@ export default function Register() {
     password: '',
     confirm_password: '',
     date_of_birth: '',
+    referral_code: '',
   });
 
   const [error, setError] = useState('');
@@ -48,13 +49,16 @@ export default function Register() {
           password: form.password,
           confirm_password: form.confirm_password,
           date_of_birth: form.date_of_birth,
+          // Backend treats a blank/missing referral_code as a no-op --
+          // safe to always send, whether or not the reader filled it in.
+          referral_code: form.referral_code,
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setAuth(data.user, data.tokens.access, data.tokens.refresh);
+        await setAuth(data.user, data.tokens.access, data.tokens.refresh);
         const role = data.user.default_login_role;
         const roleRoutes = {
           reader: '/(protected)/(reader-tabs)/dashboard',
@@ -114,6 +118,16 @@ export default function Register() {
         placeholderTextColor={colors.secondary}
         value={form.date_of_birth}
         onChangeText={(value) => handleChange('date_of_birth', value)}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Referral code (optional)"
+        placeholderTextColor={colors.secondary}
+        value={form.referral_code}
+        onChangeText={(value) => handleChange('referral_code', value)}
+        autoCapitalize="characters"
+        autoCorrect={false}
       />
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
