@@ -30,6 +30,8 @@ export const ENDPOINTS = {
     listQuillBundles: `${DB_API}currency/quills/bundles/`,
     redeemPromoCode: `${DB_API}currency/promo/redeem/`,
     redeemReferralCode: `${DB_API}currency/referral/redeem/`,
+    adminGiftCurrency: `${DB_API}currency/admin/gift/`,
+    adminCreatePromoCode: `${DB_API}currency/promo/admin/create/`,
   },
   // Reader
   reader: {
@@ -41,4 +43,8 @@ export const ENDPOINTS = {
     chapterUnlock: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/unlock/`,
     setAutoUnlock: (bookId) => `${DB_API}books/reader/library/book/${bookId}/auto-unlock/`,
   },
+  // Admin
+  admin: {
+  listUsers: `${DB_API}admin/users/list/`,
+},
 };

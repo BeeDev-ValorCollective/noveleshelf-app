@@ -6,13 +6,17 @@ import ProfileSection from '../../../components/DashboardComponents/ProfileSecti
 import WalletSection from '../../../components/DashboardComponents/ReaderDashboardComponents/WalletSection'
 import StreakSection from '../../../components/DashboardComponents/ReaderDashboardComponents/StreakSection';
 import HeroComponent from '../../../components/HeroComponent';
+import { useState } from 'react';
 
 export default function Dashboard() {
+
+  const [loginBonusBadge, setLoginBonusBadge] = useState(null);
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <HeroComponent title="Your Dashboard" />
-      <ProfileSection/>
-      <StreakSection/>
+      <ProfileSection loginBonusBadge={loginBonusBadge}/>
+      <StreakSection onBonusBadgeChange={setLoginBonusBadge}/>
       <WalletSection/>
     </ScrollView>
   );
