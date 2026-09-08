@@ -35,16 +35,24 @@ export const ENDPOINTS = {
   },
   // Reader
   reader: {
-    addBook:`${DB_API}books/reader/library/`,
-    readerShelf:`${DB_API}books/reader/library/`,
+    addBook: `${DB_API}books/reader/library/`,
+    readerShelf: `${DB_API}books/reader/library/`,
     stats: `${DB_API}books/reader/stats/`,
     bookDetail: (id) => `${DB_API}books/reader/library/book/${id}/`,
     chapterRead: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/read/`,
     chapterUnlock: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/unlock/`,
     setAutoUnlock: (bookId) => `${DB_API}books/reader/library/book/${bookId}/auto-unlock/`,
   },
+  // Follow Authors
+  follow: {
+    list: `${DB_API}follow/reader/following/`,
+    status: (profileType, profileId) =>
+      `${DB_API}follow/reader/following/status/${profileType}/${profileId}/`,
+    unfollow: (followId) =>
+      `${DB_API}follow/reader/following/${followId}/`,
+  },
   // Admin
   admin: {
-  listUsers: `${DB_API}admin/users/list/`,
-},
+    listUsers: `${DB_API}admin/users/list/`,
+  },
 };
