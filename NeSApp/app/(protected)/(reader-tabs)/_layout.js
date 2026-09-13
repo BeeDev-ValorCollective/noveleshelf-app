@@ -56,6 +56,10 @@ export default function ReaderTabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="following"
+        options={{ href: null, headerShown: false }}
+      />
+      <Tabs.Screen
         name="book/[id]"
         options={{ href: null, headerShown: false }}
       />

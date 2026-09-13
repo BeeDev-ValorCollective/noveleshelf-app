@@ -5,6 +5,7 @@ import { fonts } from '../../../constants/fonts';
 import ProfileSection from '../../../components/DashboardComponents/ProfileSection';
 import WalletSection from '../../../components/DashboardComponents/ReaderDashboardComponents/WalletSection'
 import StreakSection from '../../../components/DashboardComponents/ReaderDashboardComponents/StreakSection';
+import FollowingSection from '../../../components/DashboardComponents/ReaderDashboardComponents/FollowingSection';
 import HeroComponent from '../../../components/HeroComponent';
 import { useState } from 'react';
 
@@ -17,6 +18,7 @@ export default function Dashboard() {
       <HeroComponent title="Your Dashboard" />
       <ProfileSection loginBonusBadge={loginBonusBadge}/>
       <StreakSection onBonusBadgeChange={setLoginBonusBadge}/>
+      <FollowingSection />
       <WalletSection/>
     </ScrollView>
   );

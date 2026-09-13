@@ -2,11 +2,13 @@ import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
 import ProfileSection from '../../../components/DashboardComponents/ProfileSection';
+import FollowerSection from '../../../components/DashboardComponents/AuthorDashboardComponents/FollowerSection';
 
 export default function AuthorDashboard() {
   return (
     <View style={styles.container}>
           <ProfileSection/>
+          <FollowerSection profileType="author" />
     </View>
   );
 }

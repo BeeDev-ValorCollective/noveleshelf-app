@@ -1,7 +1,33 @@
 // utils/api.js
+
 const DB_API = process.env.EXPO_PUBLIC_DB_API;
+const DB_MEDIA = process.env.EXPO_PUBLIC_DB_MEDIA;
+
+export const getMediaUrl = (path) => {
+  if (!path) {
+    return null;
+  }
+
+  if (
+    path.startsWith('http://') ||
+    path.startsWith('https://')
+  ) {
+    return path;
+  }
+
+  const cleanBase = DB_MEDIA.endsWith('/')
+    ? DB_MEDIA.slice(0, -1)
+    : DB_MEDIA;
+
+  const cleanPath = path.startsWith('/')
+    ? path
+    : `/${path}`;
+
+  return `${cleanBase}${cleanPath}`;
+};
 
 export const ENDPOINTS = {
+
   // Auth
   auth: {
     login: `${DB_API}auth/login/`,
@@ -18,6 +44,7 @@ export const ENDPOINTS = {
     exchangeHandoffToken: `${DB_API}auth/exchange-handoff-token/`,
     readingPreferencesUpdate: `${DB_API}user/reading-preferences/`,
   },
+
   // Books
   books: {
     public: `${DB_API}books/public/books/`,
@@ -25,6 +52,7 @@ export const ENDPOINTS = {
     referenceData: `${DB_API}books/public/books/reference-data/`,
     authorDetail: (username) => `${DB_API}public/authors/${username}/`,
   },
+
   // Currency
   currency: {
     listQuillBundles: `${DB_API}currency/quills/bundles/`,
@@ -33,6 +61,7 @@ export const ENDPOINTS = {
     adminGiftCurrency: `${DB_API}currency/admin/gift/`,
     adminCreatePromoCode: `${DB_API}currency/promo/admin/create/`,
   },
+
   // Reader
   reader: {
     addBook: `${DB_API}books/reader/library/`,
@@ -41,8 +70,10 @@ export const ENDPOINTS = {
     bookDetail: (id) => `${DB_API}books/reader/library/book/${id}/`,
     chapterRead: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/read/`,
     chapterUnlock: (chapterId) => `${DB_API}books/reader/chapters/${chapterId}/unlock/`,
-    setAutoUnlock: (bookId) => `${DB_API}books/reader/library/book/${bookId}/auto-unlock/`,
+    setAutoUnlock: (bookId) =>
+      `${DB_API}books/reader/library/book/${bookId}/auto-unlock/`,
   },
+
   // Follow Authors
   follow: {
     list: `${DB_API}follow/reader/following/`,
@@ -51,8 +82,15 @@ export const ENDPOINTS = {
     unfollow: (followId) =>
       `${DB_API}follow/reader/following/${followId}/`,
   },
+
+  // Author
+  author: {
+    stats:  (profileType) => `${DB_API}follow/author/stats/?profile_type=${profileType}`,
+  },
+
   // Admin
   admin: {
     listUsers: `${DB_API}admin/users/list/`,
   },
+
 };
