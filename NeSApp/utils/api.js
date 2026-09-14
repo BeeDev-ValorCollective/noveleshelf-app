@@ -82,6 +82,11 @@ export const ENDPOINTS = {
     unfollow: (followId) =>
       `${DB_API}follow/reader/following/${followId}/`,
   },
+  
+    // Push Notifications
+  pushNotifications: {
+    token: `${DB_API}push-token/`,
+  },
 
   // Author
   author: {
