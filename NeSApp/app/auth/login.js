@@ -6,6 +6,7 @@ import useAuthStore from '../../store/authStore';
 import GradientButton from '../../components/GradientButton';
 import { colors } from '../../constants/colors';
 import { fonts } from '../../constants/fonts';
+import PasswordInput from '../../components/CommonComponents/PasswordInput';
 
 const DB_API = process.env.EXPO_PUBLIC_DB_API;
 
@@ -71,13 +72,22 @@ export default function Login() {
         autoCapitalize="none"
       />
 
-      <TextInput
+      {/* <TextInput
         style={styles.input}
         placeholder="••••••••"
         placeholderTextColor={colors.secondary}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+      /> */}
+      <PasswordInput
+        style={[styles.input, { marginBottom: 0 }]}
+        containerStyle={{ marginBottom: 16 }}
+        placeholder="••••••••"
+        placeholderTextColor={colors.secondary}
+        value={password}
+        onChangeText={setPassword}
+        iconColor={colors.secondary}
       />
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
