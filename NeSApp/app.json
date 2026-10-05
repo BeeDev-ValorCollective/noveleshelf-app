@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "NeSApp",
+    "name": "Novel eShelf",
     "slug": "NeSApp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,10 +16,17 @@
     "scheme": "noveleshelf",
 
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.noveleshelf.app",
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
 
     "android": {
+      "package": "com.noveleshelf.app",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#0d0f1a",
         "foregroundImage": "./assets/android-icon-foreground.png",
