@@ -2,19 +2,17 @@
   "expo": {
     "name": "Novel eShelf",
     "slug": "NeSApp",
+    "owner": "noveleshelf",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
-
     "splash": {
       "image": "./assets/images/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#0d0f1a"
     },
-
     "scheme": "noveleshelf",
-
     "ios": {
       "bundleIdentifier": "com.noveleshelf.app",
       "buildNumber": "1",
@@ -23,29 +21,30 @@
         "usesNonExemptEncryption": false
       }
     },
-
     "android": {
       "package": "com.noveleshelf.app",
       "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#0d0f1a",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/adaptive-icon.png"
       }
     },
-
     "web": {
       "favicon": "./assets/images/shelf.png",
       "bundler": "metro"
     },
-
     "plugins": [
       "expo-router",
       "expo-font",
       "@react-native-community/datetimepicker",
       "expo-web-browser",
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f79867b2-bd22-4a1e-8b34-c94d0f31572c"
+      }
+    }
   }
 }

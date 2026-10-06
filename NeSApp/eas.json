@@ -1,0 +1,34 @@
+{
+  "cli": {
+    "version": ">= 24.11.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_DB_API": "https://api.noveleshelf.com/api/",
+        "EXPO_PUBLIC_DB_MEDIA": "https://api.noveleshelf.com",
+        "EXPO_PUBLIC_VITE_URL": "https://noveleshelf.com"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_DB_API": "https://api.noveleshelf.com/api/",
+        "EXPO_PUBLIC_DB_MEDIA": "https://api.noveleshelf.com",
+        "EXPO_PUBLIC_VITE_URL": "https://noveleshelf.com"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
