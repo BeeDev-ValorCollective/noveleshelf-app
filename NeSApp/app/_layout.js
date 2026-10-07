@@ -9,6 +9,7 @@ import { Merienda_400Regular, Merienda_700Bold } from '@expo-google-fonts/merien
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -69,6 +70,7 @@ export default function RootLayout() {
                 headerBackTitle: '',
             }}
         >
+            <StatusBar hidden />
             <Stack.Screen
                 name="index"
                 options={{ headerShown: false }}

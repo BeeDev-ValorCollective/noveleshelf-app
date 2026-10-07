@@ -29,6 +29,9 @@
         "foregroundImage": "./assets/images/adaptive-icon.png"
       }
     },
+    "androidNavigationBar": {
+      "visible": "sticky-immersive"
+    },
     "web": {
       "favicon": "./assets/images/shelf.png",
       "bundler": "metro"
