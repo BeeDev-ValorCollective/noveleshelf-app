@@ -6,6 +6,7 @@ import useAuthStore from '../../store/authStore';
 import GradientButton from '../../components/GradientButton';
 import { colors } from '../../constants/colors';
 import { fonts } from '../../constants/fonts';
+import PasswordInput from '../../components/CommonComponents/PasswordInput';
 
 const DB_API = process.env.EXPO_PUBLIC_DB_API;
 
@@ -94,7 +95,7 @@ export default function Register() {
         autoCapitalize="none"
       />
 
-      <TextInput
+      {/* <TextInput
         style={styles.input}
         placeholder="••••••••"
         placeholderTextColor={colors.secondary}
@@ -110,6 +111,30 @@ export default function Register() {
         value={form.confirm_password}
         onChangeText={(value) => handleChange('confirm_password', value)}
         secureTextEntry
+      /> */}
+      
+      <PasswordInput
+        style={[styles.input, styles.passwordInput]}
+        containerStyle={styles.passwordContainer}
+        placeholder="Password"
+        placeholderTextColor={colors.secondary}
+        value={form.password}
+        onChangeText={(value) => handleChange('password', value)}
+        iconColor={colors.secondary}
+        textContentType="newPassword"
+        autoComplete="new-password"
+      />
+
+      <PasswordInput
+        style={[styles.input, styles.passwordInput]}
+        containerStyle={styles.passwordContainer}
+        placeholder="Confirm password"
+        placeholderTextColor={colors.secondary}
+        value={form.confirm_password}
+        onChangeText={(value) => handleChange('confirm_password', value)}
+        iconColor={colors.secondary}
+        textContentType="newPassword"
+        autoComplete="new-password"
       />
 
       <TextInput

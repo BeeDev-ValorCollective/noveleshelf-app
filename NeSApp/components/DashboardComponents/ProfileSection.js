@@ -16,7 +16,7 @@ const USERNAME_FIELD_BY_ROLE = {
   admin: 'admin_username',
 };
 
-export default function ProfileSection() {
+export default function ProfileSection({ loginBonusBadge }) {
   const router = useRouter();
   const user = useAuthStore((state) => state.user)
   const currentProfile = useAuthStore((state) => state.currentProfile);
@@ -64,6 +64,18 @@ export default function ProfileSection() {
       <Text style={styles.bio}>
         {currentProfile?.bio || <Text style={styles.placeholder}>No bio yet</Text>}
       </Text>
+
+      {loginBonusBadge && (
+        <View style={styles.loginBonusBadge}>
+          <Text style={styles.loginBonusBadgeTitle}>
+            🔥 {loginBonusBadge.title}
+          </Text>
+
+          <Text style={styles.loginBonusBadgeText}>
+            +{loginBonusBadge.reward} Black Ink Today
+          </Text>
+        </View>
+      )}
 
       <View style={styles.editButtonWrap}>
         <GradientButton title="Update Profile" onPress={handleEditProfile} style={styles.button} />
@@ -132,4 +144,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 270,
   },
+  loginBonusBadge: {
+  alignSelf: 'flex-start',
+  marginTop: 10,
+  paddingVertical: 6,
+  paddingHorizontal: 12,
+
+  backgroundColor: 'rgba(255, 193, 7, 0.12)',
+
+  borderWidth: 1,
+  borderColor: 'rgba(255, 193, 7, 0.3)',
+
+  borderRadius: 999,
+},
+
+loginBonusBadgeTitle: {
+  color: '#ffc107',
+  fontFamily: fonts.meriendaBold,
+  fontSize: 12,
+},
+
+loginBonusBadgeText: {
+  color: colors.secondary,
+  fontFamily: fonts.meriendaRegular,
+  fontSize: 10,
+  marginTop: 2,
+},
 });

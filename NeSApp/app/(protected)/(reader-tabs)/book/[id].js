@@ -19,11 +19,15 @@ export default function BookDetail() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const accessToken = useAuthStore((state) => state.accessToken);
+    const user = useAuthStore((state) => state.user);
 
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
     const [addingToShelf, setAddingToShelf] = useState(false);
     const [inShelf, setInShelf] = useState(false);
+    const [isFollowingAuthor, setIsFollowingAuthor] = useState(false);
+    const [authorFollowId, setAuthorFollowId] = useState(null);
+    const [isFollowLoading, setIsFollowLoading] = useState(false);
 
     useEffect(() => {
         fetchBook();
@@ -46,6 +50,64 @@ export default function BookDetail() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        const checkFollowStatus = async () => {
+            if (
+                !accessToken ||
+                !book?.author?.profile_type ||
+                !book?.author?.profile_id
+            ) {
+                setIsFollowingAuthor(false);
+                setAuthorFollowId(null);
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    ENDPOINTS.follow.status(
+                        book.author.profile_type,
+                        book.author.profile_id
+                    ),
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
+
+                const data = await response
+                    .json()
+                    .catch(() => ({}));
+
+                if (!response.ok) {
+                    console.error(
+                        'Follow status request failed:',
+                        data
+                    );
+
+                    setIsFollowingAuthor(false);
+                    setAuthorFollowId(null);
+                    return;
+                }
+
+                setIsFollowingAuthor(
+                    Boolean(data.following)
+                );
+
+                setAuthorFollowId(
+                    data.follow_id ?? null
+                );
+            } catch (err) {
+                console.error(
+                    'Follow status request failed:',
+                    err
+                );
+            }
+        };
+
+        checkFollowStatus();
+    }, [book, accessToken]);
 
     const handleAddToShelf = async () => {
         if (!accessToken) {
@@ -75,6 +137,108 @@ export default function BookDetail() {
             console.error('Add to shelf request failed:', err);
         } finally {
             setAddingToShelf(false);
+        }
+    };
+
+    const handleAuthorFollow = async () => {
+        if (
+            !accessToken ||
+            !book?.author?.profile_type ||
+            !book?.author?.profile_id ||
+            isFollowLoading
+        ) {
+            return;
+        }
+
+        setIsFollowLoading(true);
+
+        try {
+            if (isFollowingAuthor) {
+                if (!authorFollowId) {
+                    console.error(
+                        'Cannot unfollow author: missing follow ID.'
+                    );
+                    return;
+                }
+
+                const response = await fetch(
+                    ENDPOINTS.follow.unfollow(authorFollowId),
+                    {
+                        method: 'DELETE',
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
+
+                if (!response.ok) {
+                    const data = await response
+                        .json()
+                        .catch(() => ({}));
+
+                    console.error(
+                        'Unable to unfollow author:',
+                        data
+                    );
+
+                    return;
+                }
+
+                setIsFollowingAuthor(false);
+                setAuthorFollowId(null);
+
+                return;
+            }
+
+            const payload =
+                book.author.profile_type === 'author'
+                    ? {
+                        author_profile_id:
+                            book.author.profile_id,
+                    }
+                    : {
+                        free_author_profile_id:
+                            book.author.profile_id,
+                    };
+
+            const response = await fetch(
+                ENDPOINTS.follow.list,
+                {
+                    method: 'POST',
+                    headers: {
+                        Authorization:
+                            `Bearer ${accessToken}`,
+                        'Content-Type':
+                            'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            const data = await response
+                .json()
+                .catch(() => ({}));
+
+            if (!response.ok) {
+                console.error(
+                    'Unable to follow author:',
+                    data
+                );
+
+                return;
+            }
+
+            setIsFollowingAuthor(true);
+            setAuthorFollowId(
+                data.follow_id ?? null
+            );
+        } catch (err) {
+            console.error(
+                'Author follow request failed:',
+                err
+            );
+        } finally {
+            setIsFollowLoading(false);
         }
     };
 
@@ -108,6 +272,11 @@ export default function BookDetail() {
         );
     }
 
+    const isOwnBook =
+        user?.id &&
+        book?.author?.user_id &&
+        Number(user.id) === Number(book.author.user_id);
+
     return (
         <View style={styles.container}>
             <TouchableOpacity
@@ -118,8 +287,13 @@ export default function BookDetail() {
             </TouchableOpacity>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <BookDetailHero book={book} />
-
+                <BookDetailHero
+                    book={book}
+                    isFollowingAuthor={isFollowingAuthor}
+                    isFollowLoading={isFollowLoading}
+                    onAuthorFollow={handleAuthorFollow}
+                    isOwnBook={isOwnBook}
+                />
                 <View style={styles.content}>
                     <AddToShelfButton
                         inShelf={inShelf}

@@ -13,7 +13,34 @@ import { ENDPOINTS } from '../../../utils/api';
 import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
 
-export default function StreakSection() {
+const LOGIN_BONUS_BADGES = {
+  91: {
+    title: '91-Day Bonus',
+    reward: 25,
+  },
+  182: {
+    title: '182-Day Bonus',
+    reward: 50,
+  },
+  273: {
+    title: '273-Day Bonus',
+    reward: 75,
+  },
+  365: {
+    title: 'Yearly Login Bonus',
+    reward: 100,
+  },
+};
+
+const getLoginPatternDay = (streakDay) => {
+  if (!streakDay || streakDay < 1) {
+    return null;
+  }
+
+  return ((streakDay - 1) % 365) + 1;
+};
+
+export default function StreakSection({ onBonusBadgeChange }) {
   const accessToken = useAuthStore((state) => state.accessToken);
 
   const [stats, setStats] = useState(null);
@@ -46,21 +73,34 @@ export default function StreakSection() {
 
         setError(
           data?.detail ||
-            data?.error ||
-            'Unable to load your streaks.'
+          data?.error ||
+          'Unable to load your streaks.'
         );
 
         return;
       }
 
       setStats(data);
+
+      // ─── Login Bonus Badge ─────────────────────
+      const loginStreak = data?.login_streak ?? 0;
+
+      const patternDay =
+        getLoginPatternDay(loginStreak);
+
+      const badge =
+        LOGIN_BONUS_BADGES[patternDay] ?? null;
+
+      onBonusBadgeChange?.(badge);
+      // ─── End Login Bonus Badge ─────────────────
+
     } catch (err) {
       console.error('Failed to load reader stats:', err);
       setError('Unable to connect to the server.');
     } finally {
       setIsLoading(false);
     }
-  }, [accessToken]);
+  }, [accessToken, onBonusBadgeChange]);
 
   useEffect(() => {
     fetchStats();

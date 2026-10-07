@@ -1,7 +1,9 @@
 // app/(protected)/(reader-tabs)/reading.js
-import { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useCallback } from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
+import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
+import { setStatusBarHidden } from 'expo-status-bar';
+import * as NavigationBar from 'expo-navigation-bar';
 
 import { colors } from '../../../constants/colors';
 import useAuthStore from '../../../store/authStore';
@@ -28,6 +30,19 @@ export default function Reading() {
     const fontSize = useReadingSettingsStore((state) => state.fontSize);
     const getThemeColors = useReadingSettingsStore((state) => state.getThemeColors);
     const hydrateFromProfile = useReadingSettingsStore((state) => state.hydrateFromProfile);
+
+    // Immersive reading: hide the status bar and Android nav bar while this
+    // screen is focused, and restore both when leaving it.
+    useFocusEffect(
+        useCallback(() => {
+            setStatusBarHidden(true, 'fade');
+            if (Platform.OS === 'android') NavigationBar.setVisibilityAsync('hidden');
+            return () => {
+                setStatusBarHidden(false, 'fade');
+                if (Platform.OS === 'android') NavigationBar.setVisibilityAsync('visible');
+            };
+        }, [])
+    );
 
     useEffect(() => {
         hydrateFromProfile(user?.profile);

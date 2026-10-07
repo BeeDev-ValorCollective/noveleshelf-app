@@ -1,10 +1,10 @@
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { CheckCircle, Star, UserStar, BookOpen } from 'lucide-react-native';
 import { colors } from '../../constants/colors';
 import { fonts } from '../../constants/fonts';
 import { getMediaUrl } from '../../utils/mediaUrl';
 
-export default function BookDetailHero({ book }) {
+export default function BookDetailHero({ book, isFollowingAuthor, isFollowLoading, onAuthorFollow, isOwnBook, }) {
     return (
         <View style={styles.hero}>
             <Image
@@ -23,8 +23,43 @@ export default function BookDetailHero({ book }) {
 
                 <View style={styles.authorRow}>
                     <Text style={styles.authorName}>
-                        {book.author.display_name}
+                        {book.author?.display_name ?? 'Unknown Author'}
                     </Text>
+
+                    {!isOwnBook && (
+                        <TouchableOpacity
+                            style={[
+                                styles.followButton,
+                                isFollowingAuthor &&
+                                styles.followButtonActive,
+                            ]}
+                            onPress={onAuthorFollow}
+                            disabled={isFollowLoading}
+                        >
+                            {isFollowLoading ? (
+                                <ActivityIndicator
+                                    size="small"
+                                    color={
+                                        isFollowingAuthor
+                                            ? colors.background
+                                            : colors.primary
+                                    }
+                                />
+                            ) : (
+                                <Text
+                                    style={[
+                                        styles.followButtonText,
+                                        isFollowingAuthor &&
+                                        styles.followButtonTextActive,
+                                    ]}
+                                >
+                                    {isFollowingAuthor
+                                        ? 'Following'
+                                        : 'Follow'}
+                                </Text>
+                            )}
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 {book.is_founding_eligible && (
@@ -208,4 +243,28 @@ const styles = StyleSheet.create({
         fontFamily: fonts.meriendaRegular,
         fontSize: 12,
     },
+    followButton: {
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    minWidth: 72,
+    alignItems: 'center',
+    justifyContent: 'center',
+},
+
+followButtonActive: {
+    backgroundColor: colors.primary,
+},
+
+followButtonText: {
+    color: colors.primary,
+    fontFamily: fonts.meriendaRegular,
+    fontSize: 11,
+},
+
+followButtonTextActive: {
+    color: colors.background,
+},
 });
