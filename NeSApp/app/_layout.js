@@ -10,6 +10,7 @@ import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import * as NavigationBar from 'expo-navigation-bar';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,6 +36,10 @@ export default function RootLayout() {
         Merienda_400Regular,
         Merienda_700Bold,
     });
+    useEffect(() => {
+        if (Platform.OS !== 'android') return;
+        NavigationBar.setButtonStyleAsync('light');
+    }, []);
 
     useEffect(() => {
         const loadAuth = async () => {
@@ -62,6 +67,8 @@ export default function RootLayout() {
     if (!fontsLoaded && !fontError) return null;
 
     return (
+        <>
+        <StatusBar style="light" />
         <Stack
             screenOptions={{
                 headerStyle: { backgroundColor: colors.background },
@@ -70,7 +77,7 @@ export default function RootLayout() {
                 headerBackTitle: '',
             }}
         >
-            <StatusBar hidden />
+            
             <Stack.Screen
                 name="index"
                 options={{ headerShown: false }}
@@ -88,5 +95,6 @@ export default function RootLayout() {
                 options={{ headerShown: false }}
             />
         </Stack>
+        </>
     );
 }

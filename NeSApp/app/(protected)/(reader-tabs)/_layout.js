@@ -3,23 +3,21 @@ import { Tabs } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import { Home, Library, BookOpen, Search, Settings } from 'lucide-react-native';
 import { colors } from '../../../constants/colors';
+import useTabBarStyle from '../../../hooks/useTabBarStyle';
 
 export default function ReaderTabsLayout() {
+  const tabBarStyle = useTabBarStyle();
+
   return (
     <Tabs
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: {
-          backgroundColor: colors.background,
-          borderTopColor: colors.secondary,
-          borderTopWidth: 1,
-          height: 60,
-          paddingBottom: 8,
-        },
+        // Hide the tab bar while reading; ReadingHeader's back button is the way out
+        tabBarStyle: route.name === 'reading' ? { display: 'none' } : tabBarStyle,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.white,
         tabBarShowLabel: false,
-      }}
+      })}
     >
       <Tabs.Screen
         name="dashboard"
@@ -80,8 +78,6 @@ export default function ReaderTabsLayout() {
         options={{ href: null, headerShown: false }}
       />
     </Tabs>
-
-
   );
 }
 
