@@ -29,6 +29,10 @@
         "EXPO_PUBLIC_VITE_URL": "https://noveleshelf.com"
       },
       "channel": "production"
+    },
+    "testflight": {
+      "extends": "production",
+      "channel": "preview"
     }
   },
   "submit": {
