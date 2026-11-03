@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import useAuthStore from '../store/authStore';
+import { ENDPOINTS } from '../utils/api';
 import { FrederickatheGreat_400Regular } from '@expo-google-fonts/fredericka-the-great';
 import { Merienda_400Regular, Merienda_700Bold } from '@expo-google-fonts/merienda';
 import { colors } from '../constants/colors';
@@ -47,12 +48,36 @@ export default function RootLayout() {
             const refreshToken = await AsyncStorage.getItem('refresh_token');
             const userJson = await AsyncStorage.getItem('user');
             console.log('loadAuth - accessToken:', !!accessToken, 'userJson:', !!userJson);
-            if (accessToken && userJson) {
-                const user = JSON.parse(userJson);
-                await useAuthStore.getState().setAuth(user, accessToken, refreshToken);
-            } else {
+
+            if (!accessToken || !userJson) {
                 useAuthStore.getState().setAuthReady();
+                setIsAuthReady(true);
+                return;
             }
+
+            // Validate the stored token before trusting the cached session.
+            // /me/ also fires the daily login reward, same as Vite on load.
+            try {
+                const response = await fetch(ENDPOINTS.auth.me, {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    await useAuthStore.getState().setAuth(user, accessToken, refreshToken);
+                } else if (response.status === 401) {
+                    // Expired or invalid token -- drop to the start screen
+                    await useAuthStore.getState().clearAuth();
+                } else {
+                    // Server error -- keep the cached session rather than logging out
+                    await useAuthStore.getState().setAuth(JSON.parse(userJson), accessToken, refreshToken);
+                }
+            } catch (err) {
+                // Offline / network failure -- keep the cached session
+                console.error('Session check failed:', err);
+                await useAuthStore.getState().setAuth(JSON.parse(userJson), accessToken, refreshToken);
+            }
+
             setIsAuthReady(true);
         };
         loadAuth();

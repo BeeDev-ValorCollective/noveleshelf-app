@@ -30,7 +30,7 @@ export default function ProfileSection({ loginBonusBadge }) {
   const penName = hasPenName ? currentProfile?.pen_name : null;
 
   const handleEditProfile = () => {
-    router.push('profile-update')
+    router.push('/(protected)/profile-update')
   };
   console.log('current user', currentProfile, user)
 

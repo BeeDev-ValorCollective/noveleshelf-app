@@ -33,7 +33,7 @@ export default function ProtectedLayout() {
     );
 
     if (!isLoading && !isAuthenticated) {
-      router.replace('/auth/login');
+      router.replace('/');
     }
   }, [
     isLoading,
@@ -74,6 +74,7 @@ export default function ProtectedLayout() {
       <Stack.Screen name="(free-author-tabs)" />
       <Stack.Screen name="(admin-tabs)" />
       <Stack.Screen name="(moderator-tabs)" />
+      <Stack.Screen name="profile-update" />
     </Stack>
   );
 }
