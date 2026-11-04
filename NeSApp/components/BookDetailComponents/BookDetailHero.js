@@ -72,11 +72,13 @@ export default function BookDetailHero({ book, isFollowingAuthor, isFollowLoadin
                 )}
 
                 <View style={styles.badgeRow}>
-                    <View style={styles.ratingBadge}>
-                        <Text style={styles.ratingText}>
-                            {book.content_rating.code}
-                        </Text>
-                    </View>
+                    {book.content_rating && (
+                        <View style={styles.ratingBadge}>
+                            <Text style={styles.ratingText}>
+                                {book.content_rating.code}
+                            </Text>
+                        </View>
+                    )}
 
                     {book.is_new && (
                         <View style={styles.newBadge}>
@@ -244,27 +246,27 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
     followButton: {
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    minWidth: 72,
-    alignItems: 'center',
-    justifyContent: 'center',
-},
+        borderWidth: 1,
+        borderColor: colors.primary,
+        borderRadius: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        minWidth: 72,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 
-followButtonActive: {
-    backgroundColor: colors.primary,
-},
+    followButtonActive: {
+        backgroundColor: colors.primary,
+    },
 
-followButtonText: {
-    color: colors.primary,
-    fontFamily: fonts.meriendaRegular,
-    fontSize: 11,
-},
+    followButtonText: {
+        color: colors.primary,
+        fontFamily: fonts.meriendaRegular,
+        fontSize: 11,
+    },
 
-followButtonTextActive: {
-    color: colors.background,
-},
+    followButtonTextActive: {
+        color: colors.background,
+    },
 });

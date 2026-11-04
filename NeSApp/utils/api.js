@@ -88,6 +88,12 @@ export const ENDPOINTS = {
     token: `${DB_API}push-token/`,
   },
 
+  notifications: {
+  list: `${DB_API}notifications/my-notifications/`,
+  markRead: `${DB_API}notifications/mark-read/`,
+  markAllRead: `${DB_API}notifications/mark-all-read/`,
+},
+
   // Author
   author: {
     stats:  (profileType) => `${DB_API}follow/author/stats/?profile_type=${profileType}`,

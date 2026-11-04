@@ -77,6 +77,13 @@ export default function ReaderTabsLayout() {
         name="quill-bundles"
         options={{ href: null, headerShown: false }}
       />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
     </Tabs>
   );
 }
