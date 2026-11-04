@@ -78,12 +78,12 @@ export default function ReaderTabsLayout() {
         options={{ href: null, headerShown: false }}
       />
       <Tabs.Screen
-        name="notifications"
-        options={{
-          href: null,
-          headerShown: false,
-        }}
-      />
+  name="notifications"
+  options={{
+    href: null,
+    headerShown: false,
+  }}
+/>
     </Tabs>
   );
 }

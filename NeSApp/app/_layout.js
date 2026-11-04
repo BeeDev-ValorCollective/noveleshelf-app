@@ -34,8 +34,11 @@ import {
 
 SplashScreen.preventAutoHideAsync();
 
-// Keep the authenticated fetch handler.
-// This also preserves the X-Client-Platform header.
+// Install the shared authenticated fetch handler.
+// This preserves:
+// - X-Client-Platform tracking
+// - Automatic access-token refresh
+// - Retrying authenticated requests after refresh
 installAuthenticatedFetch();
 
 
@@ -81,7 +84,6 @@ function getBookIdFromNotification(response) {
 
 function NotificationNavigation({ isAuthReady }) {
     const router = useRouter();
-
     const navigationState = useRootNavigationState();
 
     const isAuthenticated = useAuthStore(
@@ -97,12 +99,11 @@ function NotificationNavigation({ isAuthReady }) {
 
     const handledResponses = useRef(new Set());
 
-    const pendingBookRef = useRef(null);
-
     const isReady =
         isAuthReady &&
         !isLoading &&
         !!navigationState?.key;
+
 
     // -----------------------------------------------
     // LISTEN FOR NOTIFICATION TAPS
@@ -146,23 +147,20 @@ function NotificationNavigation({ isAuthReady }) {
                 bookId
             );
 
-            pendingBookRef.current = bookId;
             setPendingBookId(bookId);
         };
 
         // Handles notification taps while the app
-        // is open or running in the background.
+        // is running or in the background.
         const subscription =
             Notifications.addNotificationResponseReceivedListener(
                 handleResponse
             );
 
-        // Handles a notification that launched the app
+        // Handles notifications that launch the app
         // from a completely closed state.
         Notifications.getLastNotificationResponseAsync()
-            .then((response) => {
-                handleResponse(response);
-            })
+            .then(handleResponse)
             .catch((error) => {
                 console.error(
                     '[PUSH] Could not read launch notification:',
@@ -186,9 +184,7 @@ function NotificationNavigation({ isAuthReady }) {
             return;
         }
 
-        // Wait until the user has authenticated.
-        // The protected layout handles redirecting
-        // unauthenticated users to the login screen.
+        // Wait for authentication before navigating.
         if (!isAuthenticated) {
             console.log(
                 '[PUSH] Waiting for user authentication.'
@@ -204,7 +200,6 @@ function NotificationNavigation({ isAuthReady }) {
             bookId
         );
 
-        pendingBookRef.current = null;
         setPendingBookId(null);
 
         router.push({
@@ -216,7 +211,7 @@ function NotificationNavigation({ isAuthReady }) {
         });
 
         // Prevent the same notification from
-        // reopening on the next app launch.
+        // reopening after the next app launch.
         if (Platform.OS !== 'web') {
             Notifications.clearLastNotificationResponseAsync()
                 .catch((error) => {
@@ -279,6 +274,12 @@ export default function RootLayout() {
                     '[AUTH] Restoring saved session...'
                 );
 
+                // Validates the session through /auth/me/.
+                // If the access token has expired, the session
+                // utility attempts to refresh it.
+                //
+                // The /auth/me/ request also preserves the
+                // daily login activity behavior from dev.
                 await restoreSession();
 
             } catch (error) {

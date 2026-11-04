@@ -57,13 +57,38 @@ The backend calls (fetches, Zustand logic, business rules) translate directly �
 ## Architecture
 
 ### Role-based navigation
-`default_login_role` from the login/`/me/` response drives which tab group the user lands in:
+`default_login_role` from the login/`/me/` response drives which tab group the user lands in, and the role switcher in Settings (`AccountSection`) changes `currentRole` in the auth store. Each role has its own tab group under `app/(protected)/`, mapped by `getTabGroupForRole()` in `utils/roleHelpers.js`:
 - `(reader-tabs)` — the primary experience, available to everyone
-- `(author-tabs)` — placeholder/light functionality for non-reader roles (author, admin, moderator)
+- `(author-tabs)`, `(free-author-tabs)`, `(moderator-tabs)`, `(admin-tabs)` — light functionality (dashboard + settings) for non-reader roles
 
 This is a change from the original plan (app always logs in as reader only, full author/admin/mod kept strictly to web) — light in-app functionality for those roles was added since, while heavy management tools (book/chapter editing, approval queues, user management) remain Vite-only.
 
+### Profile update
+`app/(protected)/profile-update.js` is a single route shared by every role, registered on the `(protected)` Stack rather than inside a tab group, so `router.back()` returns to whichever dashboard opened it. It renders the form for `currentRole` from `components/SettingsComponents/ProfileUpdateComponents/`:
+
+| Role | Form | Endpoint | Editable fields |
+|------|------|----------|-----------------|
+| reader | `UpdateReaderProfile` | `profile/update/` | username, first/last name, bio, avatar |
+| admin | `UpdateAdminProfile` | `admin-profile/update/` | admin username, avatar |
+| moderator | `UpdateModeratorProfile` | `moderator-profile/update/` | mod username, avatar |
+| author | `UpdateAuthorProfile` | `author-profile/update/` | author username, pen name, bio, show real name, avatar |
+| free_author | `UpdateFreeAuthorProfile` | `free-author-profile/update/` | author username, pen name, first/last name, bio, show real name, publicly visible, avatar |
+
+Authors can't edit first/last name by design — it's tied to their contract. On save, each form calls `updateUser({ ...user, <role>_profile })`, which keeps `currentRole` and refreshes `currentProfile`.
+
+### Image uploads
+Use `appendImage(formData, field, asset)` from `utils/imageUpload.js` with the full expo-image-picker asset. On web it appends the asset's `File`; on native it appends `{ uri, name, type }`. Appending `{ uri, name, type }` on web sends the string `"[object Object]"`, which the server currently accepts and saves.
+
 ### Auth persistence
+On startup, `loadAuth` in `app/_layout.js` reads the stored token and user from AsyncStorage and validates the token with `/me/` before trusting the session:
+- **200** — `setAuth` with the fresh user from `/me/` (so balances and profiles are current)
+- **401** — `clearAuth()`, so `app/index.js` shows the start screen
+- **5xx / network failure** — keeps the cached session so offline or a server hiccup doesn't log the user out
+
+Because it calls `/me/`, the daily login reward fires on each app open, same as Vite.
+
+Whenever auth is cleared while on a protected route (expired token, logged-out deep link on web), `app/(protected)/_layout.js` redirects to the start screen (`/`). The logout button navigates to `/auth/login` itself.
+
 A persistent `isLoading` flag plus a `setAuthReady()` action in the auth store, combined with an auth check + redirect in `app/index.js`, prevents a logout-on-reload bug that occurred when the app briefly rendered the landing page before AsyncStorage had finished rehydrating the token.
 
 ### Screens built so far
@@ -124,7 +149,7 @@ const response = await fetch('http://localhost:8000/api/auth/me/', {
 });
 ```
 
-**Token refresh (access token expires in 60 min):**
+**Token refresh (access token expires in 7 days — not currently used by the app, see Known gaps):**
 ```javascript
 const refreshToken = await SecureStore.getItemAsync('refresh_token');
 
@@ -152,7 +177,11 @@ await SecureStore.deleteItemAsync('refresh_token');
 
 - Reader library, chapter read/unlock, and follow system are built server-side but not yet wired into this app's `ENDPOINTS` or any screen.
 - Wallet balance display — data is available on every `/me/` call, no UI surfaces it yet.
-- `(author-tabs)` is currently a placeholder — scope of "light" author/admin/mod functionality in-app hasn't been finalized.
+- Scope of "light" author/admin/mod functionality in-app hasn't been finalized.
+- **No token refresh.** Nothing calls `auth/refresh/`; with 7-day access tokens, an expired session is caught at startup (see Auth persistence). `ENDPOINTS.auth.refresh` also points to `auth/token/refresh/`, which doesn't exist — the server route is `auth/refresh/`.
+- **Mid-session 401s are only handled on the shelf.** `hooks/useShelf.js` calls `clearAuth()` on a 401; other screens still fail in place if a token expires while the app is open.
+- **Silent fetch failures in the library.** `hooks/useLibrarySearch.js` doesn't surface errors, so a failed request shows an empty list instead of an error. (The shelf now shows "Unable to load your shelf" / "Unable to connect".)
+- **Moderator username key.** `getProfileForRole()` normalizes moderators with `moderator_username`, but the serializer field is `mod_username`, so `currentProfile.username` is `null` for moderators. `ProfileSection` reads `mod_username` directly, so it isn't visible yet.
 
 ---
 

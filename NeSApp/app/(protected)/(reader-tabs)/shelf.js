@@ -1,7 +1,8 @@
 // app/(protected)/(tabs)/shelf.js
-import { View, FlatList, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { colors } from '../../../constants/colors';
+import { fonts } from '../../../constants/fonts';
 import HeroComponent from '../../../components/HeroComponent';
 import useShelf from '../../../hooks/useShelf';
 
@@ -10,7 +11,7 @@ import EmptyShelf from '../../../components/ShelfComponents/EmptyShelf';
 
 export default function Shelf() {
     const router = useRouter();
-    const { books, loading, refreshing, handleRefresh } = useShelf();
+    const { books, loading, refreshing, error, handleRefresh } = useShelf();
 
     const handlePressBook = (bookId) => {
         router.push(`/(protected)/(reader-tabs)/shelf/${bookId}`);
@@ -28,7 +29,9 @@ export default function Shelf() {
         <View style={styles.container}>
             <HeroComponent title="Your Shelf" />
 
-            {books.length === 0 ? (
+            {error ? (
+                <Text style={styles.errorText}>{error}</Text>
+            ) : books.length === 0 ? (
                 <EmptyShelf />
             ) : (
                 <FlatList
@@ -69,5 +72,12 @@ const styles = StyleSheet.create({
     list: {
         paddingHorizontal: 20,
         paddingBottom: 40,
+    },
+    errorText: {
+        color: colors.secondary,
+        fontFamily: fonts.meriendaRegular,
+        fontSize: 14,
+        textAlign: 'center',
+        paddingVertical: 20,
     },
 });
