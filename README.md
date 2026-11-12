@@ -22,6 +22,26 @@ npx expo export --platform web --clear
 ```
 be sure to upload entire contents of dist folder - folder for folder.
 
+## Native Test Builds (EAS)
+
+Run from `NeSApp`. EAS uploads the local working tree (respecting `.gitignore`), so the gitignored `.env` and `/android` / `/ios` folders are not used; each profile in `eas.json` sets the live `EXPO_PUBLIC_*` values itself.
+
+| Profile | Platform | Distribution | Channel |
+|---------|----------|--------------|---------|
+| `preview` | Android tester APK | internal | `preview` |
+| `testflight` | iOS TestFlight (extends `production`) | store | `preview` |
+| `production` | store release | store | `production` |
+
+```bash
+npx eas-cli@latest build -p android --profile preview
+npx eas-cli@latest build -p ios --profile testflight
+npx eas-cli@latest submit -p ios --latest
+```
+
+- Both tester builds share the `preview` channel, so a JS-only `eas update --channel preview` reaches Android and iOS testers together. `eas update` bundles locally and reads the local `.env`, not `eas.json`, so pass the live `EXPO_PUBLIC_*` values on the command line.
+- Android APKs on expo.dev expire, so the tester APK is hosted on Google Drive; replace it via Drive's Manage versions to keep the same link. Tester guide: `misc/androidTestGuide.md`.
+- iOS: bundle ID `com.noveleshelf.app`, built and submitted to TestFlight with the `testflight` profile. The `expo-image-picker` plugin in `app.json` sets the iOS photo library permission message (`photosPermission`); without it, opening the photo picker crashes on iOS.
+
 ## Local Development
 
 ```bash

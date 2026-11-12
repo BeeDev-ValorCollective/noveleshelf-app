@@ -127,6 +127,22 @@ export async function refreshSession() {
 export async function restoreSession() {
     const state = useAuthStore.getState();
 
+    let saved = {};
+    let user = null;
+
+    const applySession = async (sessionUser, access, refresh) => {
+        await state.setAuth(sessionUser, access, refresh);
+
+        if (
+            saved.current_role &&
+            saved.current_role !== sessionUser.default_login_role
+        ) {
+            await useAuthStore.getState().setCurrentRole(
+                saved.current_role
+            );
+        }
+    };
+
     try {
         const values = await AsyncStorage.multiGet([
             'access_token',
@@ -135,14 +151,14 @@ export async function restoreSession() {
             'current_role',
         ]);
 
-        const saved = Object.fromEntries(values);
+        saved = Object.fromEntries(values);
 
         if (!saved.user || !saved.refresh_token) {
             await state.clearAuth();
             return;
         }
 
-        const user = JSON.parse(saved.user);
+        user = JSON.parse(saved.user);
 
         let accessToken = saved.access_token;
 
@@ -160,9 +176,13 @@ export async function restoreSession() {
                 }
             );
 
-            if (response.status === 401) {
+            if (response.ok) {
+                // Use the fresh user (balances, profiles)
+                // instead of the cached copy.
+                user = await response.json();
+            } else if (response.status === 401) {
                 accessToken = null;
-            } else if (!response.ok) {
+            } else {
                 throw new Error(
                     `Session validation failed: ${response.status}`
                 );
@@ -183,31 +203,39 @@ export async function restoreSession() {
             saved.refresh_token = result.refresh;
         }
 
-        await state.setAuth(
+        await applySession(
             user,
             accessToken,
             saved.refresh_token
         );
 
-        if (
-            saved.current_role &&
-            saved.current_role !== user.default_login_role
-        ) {
-            await useAuthStore.getState().setCurrentRole(
-                saved.current_role
-            );
-        }
-
         console.log('[AUTH] Session restored successfully.');
     } catch (error) {
         console.warn(
-            '[AUTH] Session could not be restored:',
+            '[AUTH] Session could not be verified:',
             error?.message
         );
 
-        // A network error should not delete saved tokens.
-        // The user stays unauthenticated for this launch,
-        // and the app can retry on its next launch.
+        // Offline or server error: keep the cached session
+        // rather than logging out. If the token really is
+        // invalid, the next authenticated request will 401
+        // and the fetch wrapper / screens will clear auth.
+        if (user && saved.access_token) {
+            try {
+                await applySession(
+                    user,
+                    saved.access_token,
+                    saved.refresh_token
+                );
+                return;
+            } catch (cacheError) {
+                console.warn(
+                    '[AUTH] Cached session could not be applied:',
+                    cacheError?.message
+                );
+            }
+        }
+
         useAuthStore.getState().setAuthReady();
     }
 }
