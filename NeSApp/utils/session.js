@@ -7,6 +7,9 @@ import useAuthStore from '../store/authStore';
 
 const nativeFetch = global.fetch.bind(global);
 
+// 'expo_ios' | 'expo_android' | 'expo_web' -- stored as DailyActivity/Event.platform
+const CLIENT_PLATFORM = `expo_${Platform.OS}`;
+
 let refreshPromise = null;
 let installed = false;
 
@@ -42,10 +45,7 @@ async function requestTokenRefresh(refreshToken) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Client-Platform':
-                    Platform.OS === 'web'
-                        ? 'expo_web'
-                        : 'expo_native',
+                'X-Client-Platform': CLIENT_PLATFORM,
             },
             body: JSON.stringify({
                 refresh: refreshToken,
@@ -168,10 +168,7 @@ export async function restoreSession() {
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
-                        'X-Client-Platform':
-                            Platform.OS === 'web'
-                                ? 'expo_web'
-                                : 'expo_native',
+                        'X-Client-Platform': CLIENT_PLATFORM,
                     },
                 }
             );
@@ -251,10 +248,7 @@ export function installAuthenticatedFetch() {
                 : input?.url || '';
 
         const taggedOptions = withHeaders(options, {
-            'X-Client-Platform':
-                Platform.OS === 'web'
-                    ? 'expo_web'
-                    : 'expo_native',
+            'X-Client-Platform': CLIENT_PLATFORM,
         });
 
         const authorization = getHeader(
