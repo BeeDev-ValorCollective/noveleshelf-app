@@ -14,7 +14,7 @@ const VITE_BASE_URL = process.env.EXPO_PUBLIC_VITE_URL;
  *   after auth, e.g. '/purchase-quills' (defaults to root)
  */
 export async function sendToVite(destinationPath = '/dashboard', returnPath = '') {
-  const { accessToken } = useAuthStore.getState();
+  const { accessToken, currentRole } = useAuthStore.getState();
 
   try {
     const res = await fetch(ENDPOINTS.auth.createHandoffToken, {
@@ -29,6 +29,11 @@ export async function sendToVite(destinationPath = '/dashboard', returnPath = ''
     }
 
     let url = `${VITE_BASE_URL}${destinationPath}?handoff=${data.handoff_token}`;
+    // Vite logs the user in under their default role; this keeps them
+    // in the role they were using here.
+    if (currentRole) {
+      url += `&role=${encodeURIComponent(currentRole)}`;
+    }
     if (returnPath) {
       url += `&return=${encodeURIComponent(returnPath)}`;
     }
