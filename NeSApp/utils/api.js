@@ -33,7 +33,7 @@ export const ENDPOINTS = {
     login: `${DB_API}auth/login/`,
     register: `${DB_API}auth/register/`,
     logout: `${DB_API}auth/logout/`,
-    refresh: `${DB_API}auth/token/refresh/`,
+    refresh: `${DB_API}auth/refresh/`,
     me: `${DB_API}auth/me/`,
     updateProfile: `${DB_API}user/profile/update/`,
     adminProfileUpdate: `${DB_API}user/admin-profile/update/`,
@@ -87,6 +87,12 @@ export const ENDPOINTS = {
   pushNotifications: {
     token: `${DB_API}push-token/`,
   },
+
+  notifications: {
+  list: `${DB_API}notifications/my-notifications/`,
+  markRead: `${DB_API}notifications/mark-read/`,
+  markAllRead: `${DB_API}notifications/mark-all-read/`,
+},
 
   // Author
   author: {

@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import useAuthStore from '../../../store/authStore';
 import { getMediaUrl } from '../../../utils/mediaUrl';
 import { ENDPOINTS } from '../../../utils/api';
+import { appendImage } from '../../../utils/imageUpload';
 import { colors } from '../../../constants/colors';
 import { fonts } from '../../../constants/fonts';
 import GradientButton from '../../GradientButton';
@@ -24,7 +25,7 @@ export default function UpdateReaderProfile() {
     const [lastName, setLastName] = useState('')
     const [username, setUsername] = useState('')
     const [bio, setBio] = useState('')
-    const [avatarUri, setAvatarUri] = useState(null)
+    const [avatarAsset, setAvatarAsset] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
@@ -53,7 +54,7 @@ export default function UpdateReaderProfile() {
         })
 
         if (!result.canceled) {
-            setAvatarUri(result.assets[0].uri)
+            setAvatarAsset(result.assets[0])
         }
     }
 
@@ -69,11 +70,8 @@ export default function UpdateReaderProfile() {
             formData.append('username', username)
             formData.append('bio', bio)
 
-            if (avatarUri) {
-                const filename = avatarUri.split('/').pop()
-                const match = /\.(\w+)$/.exec(filename)
-                const type = match ? `image/${match[1]}` : 'image/jpeg'
-                formData.append('avatar_url', { uri: avatarUri, name: filename, type })
+            if (avatarAsset) {
+                appendImage(formData, 'avatar_url', avatarAsset)
             }
 
             const res = await fetch(ENDPOINTS.auth.updateProfile, {
@@ -105,7 +103,7 @@ export default function UpdateReaderProfile() {
         </View>
     )
 
-    const currentAvatar = avatarUri || (profile?.avatar_url ? getMediaUrl(profile.avatar_url) : null)
+    const currentAvatar = avatarAsset?.uri || (profile?.avatar_url ? getMediaUrl(profile.avatar_url) : null)
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

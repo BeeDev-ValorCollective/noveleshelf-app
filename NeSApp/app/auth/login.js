@@ -1,12 +1,24 @@
-// app/auth/login.js
+
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import { useRouter } from 'expo-router';
+
 import useAuthStore from '../../store/authStore';
 import GradientButton from '../../components/GradientButton';
 import { colors } from '../../constants/colors';
 import { fonts } from '../../constants/fonts';
 import PasswordInput from '../../components/CommonComponents/PasswordInput';
+
+import {
+  getTabGroupForRole,
+  getDashboardRouteForRole,
+} from '../../utils/roleHelpers';
 
 const DB_API = process.env.EXPO_PUBLIC_DB_API;
 
@@ -31,23 +43,29 @@ export default function Login() {
       });
 
       const data = await response.json();
+
       console.log('API URL:', DB_API);
       console.log('Login response:', JSON.stringify(data, null, 2));
 
       if (response.ok) {
-        // Awaited -- setAuth is async (it writes to AsyncStorage before
-        // updating the store), so navigating before it resolves means
-        // ProtectedLayout's guard can still see isAuthenticated: false
-        // and bounce back to login, even though login itself succeeded.
-        await setAuth(data.user, data.tokens.access, data.tokens.refresh);
+        // Save authentication before navigating.
+        await setAuth(
+          data.user,
+          data.tokens.access,
+          data.tokens.refresh
+        );
 
-        const role = data.user.default_login_role;
+        // Determine the user's default login role.
+        const role = data.user.default_login_role || 'reader';
 
-        if (role === 'reader') {
-          router.replace('/(protected)/(reader-tabs)/dashboard');
-        } else {
-          router.replace('/(protected)/(author-tabs)/author-dashboard');
-        }
+        // Get the correct route group and dashboard.
+        const tabGroup = getTabGroupForRole(role);
+        const dashboardRoute = getDashboardRouteForRole(role);
+
+        // Navigate to the dashboard for that role.
+        router.replace(
+          `/(protected)/${tabGroup}/${dashboardRoute}`
+        );
       } else {
         setError(data.error || 'Login failed');
       }
@@ -60,7 +78,9 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Continue your reading journey</Text>
+      <Text style={styles.subtitle}>
+        Continue your reading journey
+      </Text>
 
       <TextInput
         style={styles.input}
@@ -72,14 +92,6 @@ export default function Login() {
         autoCapitalize="none"
       />
 
-      {/* <TextInput
-        style={styles.input}
-        placeholder="••••••••"
-        placeholderTextColor={colors.secondary}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      /> */}
       <PasswordInput
         style={[styles.input, { marginBottom: 0 }]}
         containerStyle={{ marginBottom: 16 }}
@@ -90,30 +102,33 @@ export default function Login() {
         iconColor={colors.secondary}
       />
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? (
+        <Text style={styles.error}>{error}</Text>
+      ) : null}
 
-      <GradientButton title="Sign In" onPress={handleSubmit} />
+      <GradientButton
+        title="Sign In"
+        onPress={handleSubmit}
+      />
 
-      <TouchableOpacity onPress={() => router.push('/auth/reset-password')}>
-        <Text style={styles.forgot}>Forgot password?</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => router.push('/auth/register')}>
-        <Text style={styles.signup}>
-          Don't have an account? <Text style={styles.signupLink}>Sign up</Text>
+      <TouchableOpacity
+        onPress={() => router.push('/auth/reset-password')}
+      >
+        <Text style={styles.forgot}>
+          Forgot password?
         </Text>
       </TouchableOpacity>
 
-      {/* <Text style={styles.divider}>or continue with</Text> */}
-
-      {/* <View style={styles.socialContainer}>
-        <TouchableOpacity style={styles.socialButton}>
-          <Text style={styles.socialText}>Google</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <Text style={styles.socialText}>Apple</Text>
-        </TouchableOpacity>
-      </View> */}
+      <TouchableOpacity
+        onPress={() => router.push('/auth/register')}
+      >
+        <Text style={styles.signup}>
+          Don't have an account?{' '}
+          <Text style={styles.signupLink}>
+            Sign up
+          </Text>
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }

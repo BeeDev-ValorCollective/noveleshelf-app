@@ -38,13 +38,25 @@
       "expo-font",
       "@react-native-community/datetimepicker",
       "expo-web-browser",
-      "expo-notifications"
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Novel eShelf uses your photo library so you can choose a profile picture."
+        }
+      ]
     ],
     "extra": {
       "router": {},
       "eas": {
         "projectId": "f79867b2-bd22-4a1e-8b34-c94d0f31572c"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/f79867b2-bd22-4a1e-8b34-c94d0f31572c"
     }
   }
 }

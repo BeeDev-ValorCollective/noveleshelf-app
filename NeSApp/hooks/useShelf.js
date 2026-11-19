@@ -6,22 +6,40 @@ import useAuthStore from '../store/authStore';
 
 export default function useShelf() {
     const accessToken = useAuthStore((state) => state.accessToken);
+    const clearAuth = useAuthStore((state) => state.clearAuth);
 
     const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState(null);
 
     const fetchShelf = async () => {
+        setError(null);
         try {
             const response = await fetch(ENDPOINTS.reader.readerShelf, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
-            const data = await response.json();
+
+            if (response.status === 401) {
+                // Token expired mid-session -- ProtectedLayout redirects once auth clears
+                await clearAuth();
+                return;
+            }
+
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok || !Array.isArray(data)) {
+                console.error('Shelf fetch failed:', { status: response.status, data });
+                setError('Unable to load your shelf.');
+                return;
+            }
+
             setBooks(data);
         } catch (err) {
             console.error('Shelf fetch error:', err);
+            setError('Unable to connect. Please try again.');
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -48,6 +66,7 @@ export default function useShelf() {
         books,
         loading,
         refreshing,
+        error,
         handleRefresh,
     };
 }

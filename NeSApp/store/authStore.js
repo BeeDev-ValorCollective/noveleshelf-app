@@ -1,4 +1,4 @@
-// store/authStore.js
+
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getProfileForRole, toTitleCase } from '../utils/roleHelpers';
@@ -17,15 +17,17 @@ const useAuthStore = create((set, get) => ({
     const role = user.default_login_role;
     const profile = getProfileForRole(user, role);
 
-    await AsyncStorage.setItem('access_token', accessToken);
-    await AsyncStorage.setItem('refresh_token', refreshToken);
-    await AsyncStorage.setItem('user', JSON.stringify(user));
-    await AsyncStorage.setItem('current_role', role);
+    await AsyncStorage.multiSet([
+      ['access_token', accessToken],
+      ['refresh_token', refreshToken || ''],
+      ['user', JSON.stringify(user)],
+      ['current_role', role],
+    ]);
 
     set({
       user,
       accessToken,
-      refreshToken,
+      refreshToken: refreshToken || null,
       isAuthenticated: true,
       isLoading: false,
       currentRole: role,
@@ -54,6 +56,21 @@ const useAuthStore = create((set, get) => ({
     set({ accessToken });
   },
 
+  updateTokens: async (accessToken, refreshToken) => {
+    const newRefreshToken =
+      refreshToken || get().refreshToken;
+
+    await AsyncStorage.multiSet([
+      ['access_token', accessToken],
+      ['refresh_token', newRefreshToken || ''],
+    ]);
+
+    set({
+      accessToken,
+      refreshToken: newRefreshToken,
+    });
+  },
+
   setCurrentRole: async (role) => {
     const user = get().user;
     const profile = getProfileForRole(user, role);
@@ -68,10 +85,8 @@ const useAuthStore = create((set, get) => ({
   },
 
   clearAuth: async () => {
-    await AsyncStorage.removeItem('access_token');
-    await AsyncStorage.removeItem('refresh_token');
-    await AsyncStorage.removeItem('user');
-    await AsyncStorage.removeItem('current_role');
+    // Clear in-memory state immediately, so protected
+    // screens stop treating this session as authenticated.
     set({
       user: null,
       accessToken: null,
@@ -82,6 +97,13 @@ const useAuthStore = create((set, get) => ({
       currentRoleDisplay: null,
       currentProfile: null,
     });
+
+    await AsyncStorage.multiRemove([
+      'access_token',
+      'refresh_token',
+      'user',
+      'current_role',
+    ]);
   },
 
   setAuthReady: () => set({ isLoading: false }),
