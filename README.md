@@ -100,12 +100,19 @@ Authors can't edit first/last name by design — it's tied to their contract. On
 Use `appendImage(formData, field, asset)` from `utils/imageUpload.js` with the full expo-image-picker asset. On web it appends the asset's `File`; on native it appends `{ uri, name, type }`. Appending `{ uri, name, type }` on web sends the string `"[object Object]"`, which the server currently accepts and saves.
 
 ### Auth persistence
-On startup, `loadAuth` in `app/_layout.js` reads the stored token and user from AsyncStorage and validates the token with `/me/` before trusting the session:
-- **200** — `setAuth` with the fresh user from `/me/` (so balances and profiles are current)
-- **401** — `clearAuth()`, so `app/index.js` shows the start screen
-- **5xx / network failure** — keeps the cached session so offline or a server hiccup doesn't log the user out
+Access tokens last 1 day and refresh tokens 30 days; refresh tokens rotate on every use. Session logic lives in `utils/session.js`.
 
-Because it calls `/me/`, the daily login reward fires on each app open, same as Vite.
+On startup, `app/_layout.js` calls `restoreSession()`, which reads the stored tokens and user from AsyncStorage and validates the access token with `/me/`:
+- **200** — `setAuth` with the fresh user from `/me/` (so balances and profiles are current)
+- **401** — refreshes via `auth/refresh/` and saves both returned tokens. If the refresh token is rejected (400/401), `clearAuth()`, so `app/index.js` shows the start screen
+- **5xx / network failure** — keeps the cached session so offline or a server hiccup doesn't log the user out
+- The saved `current_role` is restored after `setAuth`
+
+Because it calls `/me/`, the daily login reward fires on app open, same as Vite (see Known gaps for the expired-token case).
+
+**Mid-session:** `installAuthenticatedFetch()` (called at module scope in `app/_layout.js`) wraps `global.fetch`. Every request gets `X-Client-Platform` (`expo_ios`, `expo_android` or `expo_web`, stored as `DailyActivity`/`Event.platform`). When a `Bearer` request gets a 401, it refreshes once (concurrent 401s share one refresh) and retries; auth endpoints are skipped. `hooks/useShelf.js` still calls `clearAuth()` if a 401 makes it through.
+
+**Expo → Vite handoff:** `sendToVite()` in `utils/authHandoff.js` adds `&role=<currentRole>` so Vite opens in the role the user was using here (Vite falls back to the default role if the user lacks that profile).
 
 Whenever auth is cleared while on a protected route (expired token, logged-out deep link on web), `app/(protected)/_layout.js` redirects to the start screen (`/`). The logout button navigates to `/auth/login` itself.
 
@@ -169,7 +176,7 @@ const response = await fetch('http://localhost:8000/api/auth/me/', {
 });
 ```
 
-**Token refresh (access token expires in 7 days — not currently used by the app, see Known gaps):**
+**Token refresh (access token expires in 1 day; the app does this in `utils/session.js` — save the returned `refresh` too, the old one is blacklisted):**
 ```javascript
 const refreshToken = await SecureStore.getItemAsync('refresh_token');
 
@@ -181,6 +188,7 @@ const response = await fetch('http://localhost:8000/api/auth/refresh/', {
 
 const data = await response.json();
 await SecureStore.setItemAsync('access_token', data.access);
+await SecureStore.setItemAsync('refresh_token', data.refresh);
 ```
 
 **Logout:**
@@ -198,8 +206,8 @@ await SecureStore.deleteItemAsync('refresh_token');
 - Reader library, chapter read/unlock, and follow system are built server-side but not yet wired into this app's `ENDPOINTS` or any screen.
 - Wallet balance display — data is available on every `/me/` call, no UI surfaces it yet.
 - Scope of "light" author/admin/mod functionality in-app hasn't been finalized.
-- **No token refresh.** Nothing calls `auth/refresh/`; with 7-day access tokens, an expired session is caught at startup (see Auth persistence). `ENDPOINTS.auth.refresh` also points to `auth/token/refresh/`, which doesn't exist — the server route is `auth/refresh/`.
-- **Mid-session 401s are only handled on the shelf.** `hooks/useShelf.js` calls `clearAuth()` on a 401; other screens still fail in place if a token expires while the app is open.
+- **Expired token at startup skips `/me/`.** When the stored access token has expired, `restoreSession()` refreshes but doesn't call `/me/` again, so that launch uses the cached user and doesn't trigger the daily login reward or the `login` `DailyActivity` row (both only fire from `/me/`).
+- **Notifications screen** (`(reader-tabs)/notifications.js`, opened from the reader dashboard bell) lists in-app notifications, but book/chapter publish events only send a push and don't create in-app rows, and the list has no `book_id`, so tapping an item doesn't navigate. Pull-to-refresh doesn't work (`ScrollView` needs a `RefreshControl`), only the newest 20 load, and the bell is only on the reader dashboard. Tapping a *push* notification does open the book (`NotificationNavigation` in `app/_layout.js`, native only).
 - **Silent fetch failures in the library.** `hooks/useLibrarySearch.js` doesn't surface errors, so a failed request shows an empty list instead of an error. (The shelf now shows "Unable to load your shelf" / "Unable to connect".)
 - **Moderator username key.** `getProfileForRole()` normalizes moderators with `moderator_username`, but the serializer field is `mod_username`, so `currentProfile.username` is `null` for moderators. `ProfileSection` reads `mod_username` directly, so it isn't visible yet.
 
